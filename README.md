@@ -6,7 +6,6 @@ Let AI agents interact with your API.
 
 Install the following prerequisites:
 
-- [uv](https://docs.astral.sh/uv/)
 - [Rust](https://www.rust-lang.org)
 - [mise](https://mise.jdx.dev)
 
