@@ -1,9 +1,0 @@
-[project]
-name = "test-api"
-version = "0.1.0"
-requires-python = ">=3.13"
-dependencies = ["fastapi>=0.115.12", "uvicorn>=0.34.3"]
-
-[tool.pyright]
-venvPath = "."
-venv = ".venv"

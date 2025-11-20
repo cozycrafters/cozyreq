@@ -1,25 +1,18 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "cozyapi",
+  "productName": "cozyreq",
   "version": "0.1.0",
-  "identifier": "dev.cozyapi",
+  "identifier": "app.cozyreq",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
     "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
-  "plugins": {
-    "sql": {
-      "preload": [
-        "sqlite:data.db"
-      ]
-    }
-  },
   "app": {
     "windows": [
       {
-        "title": "cozyapi",
+        "title": "cozyreq",
         "width": 800,
         "height": 600
       }

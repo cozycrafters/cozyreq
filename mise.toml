@@ -11,7 +11,3 @@ _.file = '.env'
 [tasks."dev:app"]
 description = "Start the application in development mode"
 run = "npm run tauri dev"
-
-[tasks."dev:mcp"]
-description = "Start the MCP server in development mode"
-run = "uv run mcp dev main.py"
