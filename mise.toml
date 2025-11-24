@@ -1,5 +1,5 @@
 [tools]
-node = "lts"
+bun = "latest"
 uv = "latest"
 
 [settings]
@@ -7,7 +7,3 @@ python.uv_venv_auto = true
 
 [env]
 _.file = '.env'
-
-[tasks."dev:app"]
-description = "Start the application in development mode"
-run = "npm run tauri dev"
