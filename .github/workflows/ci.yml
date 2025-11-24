@@ -1,4 +1,4 @@
-name: Rust
+name: CI
 
 on:
   push:
@@ -15,6 +15,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+
       - name: Install OS dependencies
         run: |
           sudo apt-get update
@@ -24,6 +25,11 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+      - name: Install Typescript dependencies
+        run: bun install --frozen-lockfile
+      - name: Build Typescript
+        run: bun run build
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
@@ -33,13 +39,26 @@ jobs:
       - name: Check Rust formatting
         run: cargo fmt -- --check
         working-directory: ./src-tauri
-      - name: Rust linting
+      - name: Rust linter
         run: cargo clippy -- -D warnings
         working-directory: ./src-tauri
       - name: Run Rust tests
         run: cargo test
         working-directory: ./src-tauri
-      - name: Install Typescript dependencies
-        run: bun install --frozen-lockfile
-      - name: Build Typescript
-        run: bun run build
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+      - name: Install Python dependencies
+        run: uv sync --locked --all-extras --dev
+      - name: Check Python formatting
+        run: uv run ruff format --check .
+      - name: Python linter
+        run: uv run ruff check .
+      - name: Run Python type checks
+        run: uv run pyright
+      - name: Run Python tests
+        run: uv run pytest
