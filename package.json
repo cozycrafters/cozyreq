@@ -6,6 +6,7 @@
   "scripts": {
     "start": "vite",
     "dev": "vite",
+    "test": "vitest",
     "build": "vite build",
     "serve": "vite preview",
     "tauri": "tauri"
@@ -19,9 +20,14 @@
     "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
+    "@solidjs/testing-library": "^0.8.10",
     "@tauri-apps/cli": "^2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/user-event": "^14.6.1",
+    "jsdom": "^27.2.0",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
-    "vite-plugin-solid": "^2.11.0"
+    "vite-plugin-solid": "^2.11.0",
+    "vitest": "^4.0.13"
   }
 }
