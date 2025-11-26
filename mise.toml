@@ -1,5 +1,4 @@
 [tools]
-bun = "latest"
 uv = "latest"
 
 [settings]

@@ -14,7 +14,7 @@ You can easily install the dependencies:
 ```bash
 mise trust
 mise install
-bun install
+uv sync
 ```
 
 ## Usage
@@ -22,5 +22,5 @@ bun install
 Run the application locally:
 
 ```bash
-bun run tauri dev
+python main.py
 ```

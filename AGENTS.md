@@ -1,26 +1,25 @@
 # Agent Guidelines for CozyReq
 
-## Build & Test Commands
-- **Dev**: `bun run dev` (Vite only) or `bun run tauri dev` (full Tauri app)
-- **Build**: `bun run build` (frontend), `cargo build --manifest-path src-tauri/Cargo.toml` (Rust)
-- **Test**: `bun test` (frontend), `cargo test --manifest-path src-tauri/Cargo.toml` (all Rust tests)
-- **Single Test**: `bun test -t "test name"` (frontend), `cargo test test_name --manifest-path src-tauri/Cargo.toml` (Rust)
-- **Lint**: `cargo clippy --manifest-path src-tauri/Cargo.toml -- -D warnings`, `cargo fmt --manifest-path src-tauri/Cargo.toml -- --check`
-- **Format**: `cargo fmt --manifest-path src-tauri/Cargo.toml`
+## Setup
+- Install dependencies: `mise install && uv sync`
+- Python version: 3.13+
+
+## Build/Lint/Test Commands
+- Format check: `uv run ruff format --check`
+- Format code: `uv run ruff format`
+- Lint: `uv run ruff check`
+- Type check: `uv run pyright`
+- Run all tests: `uv run pytest`
+- Run single test: `uv run pytest path/to/test_file.py::test_function_name`
 
 ## Code Style
+- **Indentation**: 4 spaces for Python (per .editorconfig)
+- **Line endings**: LF only
+- **Formatting**: Use Ruff (enforced in CI)
+- **Type hints**: Required - Pyright type checking is enabled
+- **Dependencies**: Managed via uv, specified in pyproject.toml
+- **Charset**: UTF-8 with final newline in all files
 
-### TypeScript/SolidJS
-- Use **SolidJS** primitives (`createSignal`, `createEffect`, etc.) - no React hooks
-- **Strict mode** enabled: all types required, no implicit `any`, no unused vars/params
-- Import order: external deps, Tauri API (`@tauri-apps/*`), local modules, CSS/assets
-- Use `invoke()` from `@tauri-apps/api/core` for Rust backend calls
-- JSX: preserve mode with `jsxImportSource: "solid-js"`, use TailwindCSS for styling
-- Testing: Vitest with `@solidjs/testing-library`, use `render()` and `getByRole()`
-
-### Rust
-- **Edition 2021**, stable toolchain with `rustfmt` and `clippy` components
-- Use `#[tauri::command]` for functions exposed to frontend
-- Format with `rustfmt`, lint with `clippy` (zero warnings policy)
-- Error handling: use `Result<T, E>` with `.expect()` and descriptive messages
-- Naming: `snake_case` for functions/vars, `PascalCase` for types/structs
+## Workflow
+- All changes must pass: ruff format check, ruff check, pyright, and pytest
+- CI runs these checks automatically on PRs to main branch

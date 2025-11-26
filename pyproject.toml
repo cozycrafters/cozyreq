@@ -1,11 +1,9 @@
 [project]
 name = "cozyreq"
 version = "0.1.0"
+readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []
-
-[tool.uv.workspace]
-members = ["packages/*"]
 
 [dependency-groups]
 dev = [
@@ -13,3 +11,7 @@ dev = [
     "pytest>=9.0.1",
     "ruff>=0.14.6",
 ]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"

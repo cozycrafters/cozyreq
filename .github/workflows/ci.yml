@@ -6,23 +6,8 @@ on:
   pull_request:
     branches: ["main"]
 
-env:
-  CARGO_TERM_COLOR: always
-
 jobs:
-  build-typescript:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - name: Install Typescript dependencies
-        run: bun install --frozen-lockfile
-      - name: Build Typescript
-        run: bun run build
-
-  build-python:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -42,28 +27,3 @@ jobs:
         run: uv run pyright
       - name: Run Python tests
         run: uv run pytest
-
-  build-rust:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
-      - uses: swatinem/rust-cache@v2
-        with:
-          workspaces: src-tauri
-      - name: Install OS dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-          libwebkit2gtk-4.1-dev
-      - name: Check Rust formatting
-        run: cargo fmt -- --check
-        working-directory: ./src-tauri
-      - name: Rust linter
-        run: cargo clippy -- -D warnings
-        working-directory: ./src-tauri
-      - name: Run Rust tests
-        run: cargo test
-        working-directory: ./src-tauri

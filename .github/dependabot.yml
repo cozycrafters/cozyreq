@@ -5,17 +5,7 @@ updates:
     schedule:
       interval: "weekly"
 
-  - package-ecosystem: "cargo"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-
   - package-ecosystem: "uv"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: bun
     directory: "/"
     schedule:
       interval: "weekly"
