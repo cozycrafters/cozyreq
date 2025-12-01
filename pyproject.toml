@@ -10,6 +10,7 @@ dev = [
     "pyright>=1.1.407",
     "pytest>=9.0.1",
     "ruff>=0.14.6",
+    "zensical>=0.0.10",
 ]
 
 [tool.pyright]
