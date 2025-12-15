@@ -3,7 +3,7 @@
 ## Setup
 - Install dependencies: `mise install && uv sync`
 - Add new dependencies: `uv add <package>` (or `uv add --dev <package>` for dev dependencies)
-- Python version: 3.13+
+- Python version: 3.14+
 
 ## Build/Lint/Test Commands
 - Format check: `uv run ruff format --check`
