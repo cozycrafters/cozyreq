@@ -39,7 +39,12 @@ impl ExecutionRequest {
         self
     }
 
-    pub fn with_response(mut self, status_code: u16, response_body: String, duration_ms: u64) -> Self {
+    pub fn with_response(
+        mut self,
+        status_code: u16,
+        response_body: String,
+        duration_ms: u64,
+    ) -> Self {
         self.status_code = Some(status_code);
         self.response_body = Some(response_body);
         self.duration_ms = Some(duration_ms);

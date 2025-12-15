@@ -3,15 +3,15 @@ use color_eyre::Result;
 use crossterm::{
     event::{self, Event, KeyCode, KeyEvent, KeyModifiers},
     execute,
-    terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
+    Terminal,
     backend::CrosstermBackend,
     layout::{Constraint, Direction, Layout, Rect},
     style::{Color, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Paragraph, Wrap},
-    Terminal,
 };
 use std::io;
 
@@ -51,10 +51,8 @@ impl App {
             LogEntryType::UserPrompt,
             "> get all users and update first email".to_string(),
         ));
-        self.log_entries.push(LogEntry::new(
-            LogEntryType::UserPrompt,
-            "".to_string(),
-        ));
+        self.log_entries
+            .push(LogEntry::new(LogEntryType::UserPrompt, "".to_string()));
         self.log_entries.push(LogEntry::new(
             LogEntryType::Planning,
             "🤖 Planning...".to_string(),
@@ -67,42 +65,63 @@ impl App {
             LogEntryType::Discovery,
             "✓ Found: POST /api/users".to_string(),
         ));
-        self.log_entries.push(LogEntry::new(
-            LogEntryType::UserPrompt,
-            "".to_string(),
-        ));
+        self.log_entries
+            .push(LogEntry::new(LogEntryType::UserPrompt, "".to_string()));
         self.log_entries.push(LogEntry::new(
             LogEntryType::ExecutionStart,
             "🔄 Executing:".to_string(),
         ));
-        self.log_entries.push(LogEntry::new(
-            LogEntryType::RequestExec,
-            "[1] GET /api/users".to_string(),
-        ).with_request_number(1));
-        self.log_entries.push(LogEntry::new(
-            LogEntryType::RequestResult,
-            "    ✓ 200 OK (145ms)".to_string(),
-        ).with_request_number(1));
-        self.log_entries.push(LogEntry::new(
-            LogEntryType::RequestExec,
-            "[2] POST /api/users/1".to_string(),
-        ).with_request_number(2));
-        self.log_entries.push(LogEntry::new(
-            LogEntryType::RequestResult,
-            "    ✓ 200 OK (89ms)".to_string(),
-        ).with_request_number(2));
+        self.log_entries.push(
+            LogEntry::new(LogEntryType::RequestExec, "[1] GET /api/users".to_string())
+                .with_request_number(1),
+        );
+        self.log_entries.push(
+            LogEntry::new(
+                LogEntryType::RequestResult,
+                "    ✓ 200 OK (145ms)".to_string(),
+            )
+            .with_request_number(1),
+        );
+        self.log_entries.push(
+            LogEntry::new(
+                LogEntryType::RequestExec,
+                "[2] POST /api/users/1".to_string(),
+            )
+            .with_request_number(2),
+        );
+        self.log_entries.push(
+            LogEntry::new(
+                LogEntryType::RequestResult,
+                "    ✓ 200 OK (89ms)".to_string(),
+            )
+            .with_request_number(2),
+        );
 
         // Add dummy requests
         self.requests.push(
             ExecutionRequest::new(1, "GET".to_string(), "/api/users".to_string())
-                .with_headers(vec![("Content-Type".to_string(), "application/json".to_string())])
-                .with_response(200, r#"[{"id": 1, "email": "old@example.com"}, ...]"#.to_string(), 145),
+                .with_headers(vec![(
+                    "Content-Type".to_string(),
+                    "application/json".to_string(),
+                )])
+                .with_response(
+                    200,
+                    r#"[{"id": 1, "email": "old@example.com"}, ...]"#.to_string(),
+                    145,
+                ),
         );
         self.requests.push(
             ExecutionRequest::new(2, "POST".to_string(), "/api/users/1".to_string())
-                .with_headers(vec![("Content-Type".to_string(), "application/json".to_string())])
+                .with_headers(vec![(
+                    "Content-Type".to_string(),
+                    "application/json".to_string(),
+                )])
                 .with_body("{\n  \"email\": \"new@example.com\"\n}".to_string())
-                .with_response(200, "{\n  \"id\": 1,\n  \"email\": \"new@example.com\"\n}".to_string(), 89),
+                .with_response(
+                    200,
+                    "{\n  \"id\": 1,\n  \"email\": \"new@example.com\"\n}".to_string(),
+                    89,
+                ),
         );
 
         self.selected_request_index = 1;
@@ -126,7 +145,9 @@ impl App {
                 }
             }
             (KeyCode::Down, KeyModifiers::NONE) => {
-                if !self.requests.is_empty() && self.selected_request_index < self.requests.len() - 1 {
+                if !self.requests.is_empty()
+                    && self.selected_request_index < self.requests.len() - 1
+                {
                     self.selected_request_index += 1;
                 }
             }
@@ -159,20 +180,16 @@ impl App {
 
     fn submit_prompt(&mut self, message: String) {
         // Add blank line
-        self.log_entries.push(LogEntry::new(
-            LogEntryType::UserPrompt,
-            "".to_string(),
-        ));
+        self.log_entries
+            .push(LogEntry::new(LogEntryType::UserPrompt, "".to_string()));
         // Add user prompt
         self.log_entries.push(LogEntry::new(
             LogEntryType::UserPrompt,
             format!("> {}", message),
         ));
         // Add planning status
-        self.log_entries.push(LogEntry::new(
-            LogEntryType::UserPrompt,
-            "".to_string(),
-        ));
+        self.log_entries
+            .push(LogEntry::new(LogEntryType::UserPrompt, "".to_string()));
         self.log_entries.push(LogEntry::new(
             LogEntryType::Planning,
             "🤖 Planning...".to_string(),
@@ -446,7 +463,11 @@ mod tests {
 
         assert_eq!(app.input, "");
         assert_eq!(app.input_mode, InputMode::Normal);
-        assert!(app.log_entries.iter().any(|e| e.content.contains("test prompt")));
+        assert!(
+            app.log_entries
+                .iter()
+                .any(|e| e.content.contains("test prompt"))
+        );
     }
 
     #[test]
@@ -473,7 +494,10 @@ mod tests {
     #[test]
     fn test_format_request_details() {
         let req = ExecutionRequest::new(1, "GET".to_string(), "/api/test".to_string())
-            .with_headers(vec![("Content-Type".to_string(), "application/json".to_string())])
+            .with_headers(vec![(
+                "Content-Type".to_string(),
+                "application/json".to_string(),
+            )])
             .with_body("test body".to_string())
             .with_response(200, "response body".to_string(), 100);
 
