@@ -11,19 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: astral-sh/setup-uv@v7
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          enable-cache: true
-      - uses: actions/setup-python@v6
-        with:
-          python-version-file: .python-version
-      - name: Install Python dependencies
-        run: uv sync --frozen
-      - name: Check Python formatting
-        run: uv run ruff format --check
-      - name: Python linter
-        run: uv run ruff check
-      - name: Run Python type checks
-        run: uv run pyright
-      - name: Run Python tests
-        run: uv run pytest
+          components: rustfmt, clippy
+      - name: Check formatting
+        run: cargo fmt -- --check
+      - name: Linting
+        run: cargo clippy -- -D warnings
+      - name: Run tests
+        run: cargo test
