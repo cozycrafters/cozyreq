@@ -6,7 +6,6 @@ Let AI agents interact with your API.
 
 Install the following prerequisites:
 
-- [Rust](https://www.rust-lang.org)
 - [mise](https://mise.jdx.dev)
 
 You can easily install the dependencies:
@@ -24,3 +23,13 @@ Run the application locally:
 ```bash
 python main.py
 ```
+
+### Documentation
+
+To run the documentation locally, run:
+
+```bash
+zensical serve
+```
+
+Open [localhost:8000](http://localhost:8000) in your browser.
