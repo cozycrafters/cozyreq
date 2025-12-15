@@ -56,39 +56,58 @@ specs/[###-feature]/
 -->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
-src/
+# [REMOVE IF UNUSED] Option 1: Single Python project (DEFAULT for CozyReq)
+# Python module in project root with co-located tests
+projectname/              # Python module directory at root (e.g., cozyreq/)
+├── __init__.py
+├── tui.py
+├── test_tui.py           # Co-located with tui.py
 ├── models/
+│   ├── __init__.py
+│   ├── user.py
+│   └── test_user.py      # Co-located with user.py
 ├── services/
-├── cli/
-└── lib/
-
-tests/
-├── contract/
-├── integration/
-└── unit/
+│   ├── __init__.py
+│   ├── api.py
+│   └── test_api.py       # Co-located with api.py
+└── cli/
+    ├── __init__.py
+    ├── commands.py
+    └── test_commands.py  # Co-located with commands.py
 
 # [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
+# Tests are co-located with code in both frontend and backend
 backend/
-├── src/
+├── projectname/          # Python module in backend/
 │   ├── models/
+│   │   ├── user.py
+│   │   └── test_user.py
 │   ├── services/
+│   │   ├── auth.py
+│   │   └── test_auth.py
 │   └── api/
-└── tests/
+│       ├── routes.py
+│       └── test_routes.py
 
 frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
+└── src/
+    ├── components/
+    │   ├── Button.tsx
+    │   └── Button.test.tsx
+    ├── pages/
+    │   ├── Home.tsx
+    │   └── Home.test.tsx
+    └── services/
+        ├── api.ts
+        └── api.test.ts
 
 # [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
 api/
-└── [same as backend above]
+└── projectname/          # Python module in api/
+    └── [same structure as Option 1 - tests co-located]
 
 ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+└── [platform-specific structure with co-located tests following platform conventions]
 ```
 
 **Structure Decision**: [Document the selected structure and reference the real
