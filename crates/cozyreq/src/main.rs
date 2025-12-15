@@ -1,7 +1,5 @@
-use color_eyre::Result;
-
-fn main() -> Result<()> {
+fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
-    cozyreq::tui::run()?;
+    cozyreq_tui::run()?;
     Ok(())
 }

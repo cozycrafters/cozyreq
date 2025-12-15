@@ -120,6 +120,16 @@ name = "cozyreq"
 version = "0.1.0"
 dependencies = [
  "color-eyre",
+ "cozyreq_tui",
+ "crossterm 0.29.0",
+ "ratatui",
+]
+
+[[package]]
+name = "cozyreq_tui"
+version = "0.1.0"
+dependencies = [
+ "color-eyre",
  "crossterm 0.29.0",
  "ratatui",
 ]
