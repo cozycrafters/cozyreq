@@ -9,5 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
+# Rust
+target/
+
 # Website
 site/
