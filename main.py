@@ -1,5 +1,9 @@
+from cozyreq.tui import CozyReqApp
+
+
 def main():
-    print("Hello from cozyreq!")
+    app = CozyReqApp()
+    app.run()
 
 
 if __name__ == "__main__":
