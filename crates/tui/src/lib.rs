@@ -17,19 +17,19 @@ use std::io;
 
 /// Represents a single HTTP request in the execution flow
 #[derive(Debug, Clone, PartialEq)]
-pub struct ExecutionRequest {
-    pub number: usize,
-    pub method: String,
-    pub url: String,
-    pub headers: Vec<(String, String)>,
-    pub body: Option<String>,
-    pub status_code: Option<u16>,
-    pub response_body: Option<String>,
-    pub duration_ms: Option<u64>,
+struct ExecutionRequest {
+    number: usize,
+    method: String,
+    url: String,
+    headers: Vec<(String, String)>,
+    body: Option<String>,
+    status_code: Option<u16>,
+    response_body: Option<String>,
+    duration_ms: Option<u64>,
 }
 
 impl ExecutionRequest {
-    pub fn new(number: usize, method: String, url: String) -> Self {
+    fn new(number: usize, method: String, url: String) -> Self {
         Self {
             number,
             method,
@@ -42,22 +42,17 @@ impl ExecutionRequest {
         }
     }
 
-    pub fn with_headers(mut self, headers: Vec<(String, String)>) -> Self {
+    fn with_headers(mut self, headers: Vec<(String, String)>) -> Self {
         self.headers = headers;
         self
     }
 
-    pub fn with_body(mut self, body: String) -> Self {
+    fn with_body(mut self, body: String) -> Self {
         self.body = Some(body);
         self
     }
 
-    pub fn with_response(
-        mut self,
-        status_code: u16,
-        response_body: String,
-        duration_ms: u64,
-    ) -> Self {
+    fn with_response(mut self, status_code: u16, response_body: String, duration_ms: u64) -> Self {
         self.status_code = Some(status_code);
         self.response_body = Some(response_body);
         self.duration_ms = Some(duration_ms);
@@ -67,7 +62,7 @@ impl ExecutionRequest {
 
 /// Type of log entry in the execution flow
 #[derive(Debug, Clone, PartialEq)]
-pub enum LogEntryType {
+enum LogEntryType {
     UserPrompt,
     Planning,
     Discovery,
@@ -91,14 +86,14 @@ impl fmt::Display for LogEntryType {
 
 /// Represents a single entry in the execution log
 #[derive(Debug, Clone, PartialEq)]
-pub struct LogEntry {
+struct LogEntry {
     pub entry_type: LogEntryType,
     pub content: String,
     pub request_number: Option<usize>,
 }
 
 impl LogEntry {
-    pub fn new(entry_type: LogEntryType, content: String) -> Self {
+    fn new(entry_type: LogEntryType, content: String) -> Self {
         Self {
             entry_type,
             content,
@@ -106,31 +101,30 @@ impl LogEntry {
         }
     }
 
-    pub fn with_request_number(mut self, request_number: usize) -> Self {
+    fn with_request_number(mut self, request_number: usize) -> Self {
         self.request_number = Some(request_number);
         self
     }
 }
 
 /// The main TUI application state
-pub struct App {
-    pub requests: Vec<ExecutionRequest>,
-    pub log_entries: Vec<LogEntry>,
-    pub selected_request_index: usize,
-    pub input: String,
-    pub input_mode: InputMode,
-    pub should_quit: bool,
-    pub log_scroll: u16,
+struct App {
+    requests: Vec<ExecutionRequest>,
+    log_entries: Vec<LogEntry>,
+    selected_request_index: usize,
+    input: String,
+    input_mode: InputMode,
+    should_quit: bool,
 }
 
 #[derive(Debug, PartialEq)]
-pub enum InputMode {
+enum InputMode {
     Normal,
     Editing,
 }
 
 impl App {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self {
             requests: Vec::new(),
             log_entries: Vec::new(),
@@ -138,11 +132,10 @@ impl App {
             input: String::new(),
             input_mode: InputMode::Normal,
             should_quit: false,
-            log_scroll: 0,
         }
     }
 
-    pub fn with_dummy_data(mut self) -> Self {
+    fn with_dummy_data(mut self) -> Self {
         // Add dummy log entries
         self.log_entries.push(LogEntry::new(
             LogEntryType::UserPrompt,
@@ -225,7 +218,7 @@ impl App {
         self
     }
 
-    pub fn handle_key_event(&mut self, key: KeyEvent) {
+    fn handle_key_event(&mut self, key: KeyEvent) {
         match self.input_mode {
             InputMode::Normal => self.handle_normal_mode(key),
             InputMode::Editing => self.handle_editing_mode(key),
