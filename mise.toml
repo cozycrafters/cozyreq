@@ -1,8 +1,6 @@
 [tools]
+rust = "stable"
 uv = "latest"
-
-[settings]
-python.uv_venv_auto = true
 
 [env]
 _.file = '.env'

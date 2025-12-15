@@ -1,32 +1,27 @@
 # Agent Guidelines for CozyReq
 
-## Setup
-- Install dependencies: `mise install && uv sync`
-- Add new dependencies: `uv add <package>` (or `uv add --dev <package>` for dev dependencies)
-- Python version: 3.14+
-
-## Build/Lint/Test Commands
-- Format check: `uv run ruff format --check`
-- Format code: `uv run ruff format`
-- Lint: `uv run ruff check`
-- Lint with auto-fix: `uv run ruff check --fix`
-- Type check: `uv run pyright`
-- Run all tests: `uv run pytest`
-- Run single test: `uv run pytest path/to/test_file.py::test_function_name`
+## Build/Test Commands
+- **Build**: `cargo build`
+- **Run**: `cargo run`
+- **Test all**: `cargo test`
+- **Test single**: `cargo test test_name`
+- **Format**: `cargo fmt`
+- **Lint**: `cargo clippy -- -D warnings`
+- **Format check**: `cargo fmt -- --check`
+- **Add dependency**: `cargo add <crate>` (optionally specify version with `@version`)
+- **Remove dependency**: `cargo remove <crate>`
 
 ## Code Style
-- **Indentation**: 4 spaces for Python, 2 spaces for other files (per .editorconfig)
-- **Line endings**: LF only
-- **Formatting**: Use Ruff (enforced in CI)
-- **Type hints**: Required - Pyright type checking is enabled
-- **Imports**: Follow PEP 8 ordering (stdlib, third-party, local)
-- **Naming**: snake_case for functions/variables, PascalCase for classes
-- **Docstrings**: Use for public APIs and complex functions
-- **Error handling**: Prefer specific exceptions over bare except clauses
-- **Dependencies**: Managed via uv, specified in pyproject.toml
-- **Charset**: UTF-8 with final newline in all files
+- **Edition**: Rust 2024
+- **Formatting**: Use `cargo fmt` (standard rustfmt rules)
+- **Imports**: Group by std → external crates → crate modules; alphabetical order
+- **Types**: Explicit types in struct fields, inference OK in local variables
+- **Naming**: snake_case (functions/vars), PascalCase (types/enums), SCREAMING_SNAKE_CASE (constants)
+- **Error handling**: Use `color_eyre::Result<T>` for fallible functions; propagate with `?`
+- **Documentation**: Doc comments (`///`) for public items, explain "why" not "what"
+- **Testing**: Place tests in `#[cfg(test)] mod tests` within same file; name tests descriptively
 
-## Workflow
-- All changes must pass: ruff format check, ruff check, pyright, and pytest
-- CI runs these checks automatically on PRs to main branch
-- Fix linting issues with `uv run ruff check --fix` before committing
+## Project Structure
+- Workspace with crates in `crates/` directory
+- Main binary in `crates/cozyreq/src/main.rs`
+- TUI logic in `crates/cozyreq/src/tui.rs`
