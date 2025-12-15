@@ -4,19 +4,19 @@ use crate::events::Message;
 
 /// Represents a single HTTP request in the execution flow
 #[derive(Debug, Clone, PartialEq)]
-pub struct ExecutionRequest {
-    pub number: usize,
-    pub method: String,
-    pub url: String,
-    pub headers: Vec<(String, String)>,
-    pub body: Option<String>,
-    pub status_code: Option<u16>,
-    pub response_body: Option<String>,
-    pub duration_ms: Option<u64>,
+pub(crate) struct ExecutionRequest {
+    pub(crate) number: usize,
+    pub(crate) method: String,
+    pub(crate) url: String,
+    pub(crate) headers: Vec<(String, String)>,
+    pub(crate) body: Option<String>,
+    pub(crate) status_code: Option<u16>,
+    pub(crate) response_body: Option<String>,
+    duration_ms: Option<u64>,
 }
 
 impl ExecutionRequest {
-    pub fn new(number: usize, method: String, url: String) -> Self {
+    pub(crate) fn new(number: usize, method: String, url: String) -> Self {
         Self {
             number,
             method,
@@ -29,17 +29,17 @@ impl ExecutionRequest {
         }
     }
 
-    pub fn with_headers(mut self, headers: Vec<(String, String)>) -> Self {
+    pub(crate) fn with_headers(mut self, headers: Vec<(String, String)>) -> Self {
         self.headers = headers;
         self
     }
 
-    pub fn with_body(mut self, body: String) -> Self {
+    pub(crate) fn with_body(mut self, body: String) -> Self {
         self.body = Some(body);
         self
     }
 
-    pub fn with_response(
+    pub(crate) fn with_response(
         mut self,
         status_code: u16,
         response_body: String,
@@ -54,7 +54,7 @@ impl ExecutionRequest {
 
 /// Type of log entry in the execution flow
 #[derive(Debug, Clone, PartialEq)]
-pub enum LogEntryType {
+pub(crate) enum LogEntryType {
     UserPrompt,
     Planning,
     Discovery,
@@ -78,14 +78,14 @@ impl fmt::Display for LogEntryType {
 
 /// Represents a single entry in the execution log
 #[derive(Debug, Clone, PartialEq)]
-pub struct LogEntry {
-    pub entry_type: LogEntryType,
-    pub content: String,
-    pub request_number: Option<usize>,
+pub(crate) struct LogEntry {
+    pub(crate) entry_type: LogEntryType,
+    pub(crate) content: String,
+    request_number: Option<usize>,
 }
 
 impl LogEntry {
-    pub fn new(entry_type: LogEntryType, content: String) -> Self {
+    pub(crate) fn new(entry_type: LogEntryType, content: String) -> Self {
         Self {
             entry_type,
             content,
@@ -93,7 +93,7 @@ impl LogEntry {
         }
     }
 
-    pub fn with_request_number(mut self, request_number: usize) -> Self {
+    fn with_request_number(mut self, request_number: usize) -> Self {
         self.request_number = Some(request_number);
         self
     }
@@ -101,31 +101,31 @@ impl LogEntry {
 
 /// Input mode for the application
 #[derive(Debug, PartialEq, Clone)]
-pub enum InputMode {
+pub(crate) enum InputMode {
     Normal,
     Editing,
 }
 
 /// Running state of the application
 #[derive(Debug, PartialEq, Clone)]
-pub enum RunningState {
+pub(crate) enum RunningState {
     Running,
     Done,
 }
 
 /// The main TUI application state
 #[derive(Debug)]
-pub struct Model {
-    pub requests: Vec<ExecutionRequest>,
-    pub log_entries: Vec<LogEntry>,
-    pub selected_request_index: usize,
-    pub input: String,
-    pub input_mode: InputMode,
-    pub running_state: RunningState,
+pub(crate) struct Model {
+    pub(crate) requests: Vec<ExecutionRequest>,
+    pub(crate) log_entries: Vec<LogEntry>,
+    selected_request_index: usize,
+    pub(crate) input: String,
+    pub(crate) input_mode: InputMode,
+    pub(crate) running_state: RunningState,
 }
 
 impl Model {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         Self {
             requests: Vec::new(),
             log_entries: Vec::new(),
@@ -136,7 +136,7 @@ impl Model {
         }
     }
 
-    pub fn get_selected_request(&self) -> Option<&ExecutionRequest> {
+    pub(crate) fn get_selected_request(&self) -> Option<&ExecutionRequest> {
         self.requests.get(self.selected_request_index)
     }
 }
@@ -150,7 +150,7 @@ impl Default for Model {
 /// Updates the model based on a message
 ///
 /// Returns an optional message for chaining (Finite State Machine pattern)
-pub fn update(model: &mut Model, msg: Message) -> Option<Message> {
+pub(crate) fn update(model: &mut Model, msg: Message) -> Option<Message> {
     match msg {
         Message::NavigateUp => {
             if model.selected_request_index > 0 {

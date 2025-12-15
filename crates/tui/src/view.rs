@@ -9,7 +9,7 @@ use ratatui::{
 use crate::model::{ExecutionRequest, InputMode, LogEntryType, Model};
 
 /// Main view function - renders the entire UI
-pub fn view(model: &Model, frame: &mut Frame) {
+pub(crate) fn view(model: &Model, frame: &mut Frame) {
     let size = frame.area();
 
     // Create main layout
@@ -113,7 +113,7 @@ fn render_details_panel(frame: &mut Frame, model: &Model, area: Rect) {
 }
 
 /// Formats request details for display
-pub fn format_request_details(req: &ExecutionRequest) -> String {
+pub(crate) fn format_request_details(req: &ExecutionRequest) -> String {
     let mut details = Vec::new();
 
     details.push(format!("[{}] {} {}", req.number, req.method, req.url));
