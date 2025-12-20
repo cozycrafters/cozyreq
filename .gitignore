@@ -3,3 +3,6 @@ target/
 
 # Website
 site/
+
+# Local environment variables
+.env
