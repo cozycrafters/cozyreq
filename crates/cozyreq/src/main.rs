@@ -1,5 +1,7 @@
-fn main() -> color_eyre::Result<()> {
+use cozyreq::tui;
+
+#[tokio::main]
+pub async fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
-    cozyreq_tui::run()?;
-    Ok(())
+    tui::run().await
 }
