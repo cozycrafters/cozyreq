@@ -1,39 +1,36 @@
-use std::{io, panic};
+use std::{io, panic, time::Duration};
 
 use ratatui::{
     Terminal,
     crossterm::{
         ExecutableCommand,
+        event::{self, Event, KeyCode, KeyEvent},
         terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
     },
     prelude::{Backend, CrosstermBackend},
 };
 
-use crate::tui::{
-    model::{Model, RunningState},
-    view::view,
-};
+use crate::tui::components::counter::Counter;
 
-mod event;
-mod model;
-mod view;
+mod components;
+
+struct App {
+    components: Vec<Box<dyn components::Component>>,
+    should_stop: bool,
+}
 
 pub async fn run() -> color_eyre::Result<()> {
     install_panic_hook();
     let mut terminal = init_terminal()?;
-    let mut model = Model::default();
+    let mut app = App::new();
     loop {
-        terminal.draw(|f| view(&mut model, f))?;
-        let mut current_msg = event::handle(&model)?;
-        loop {
-            match current_msg {
-                Some(msg) => {
-                    current_msg = model::update(&mut model, msg);
-                }
-                None => break,
+        terminal.draw(|f| {
+            for component in &mut app.components {
+                component.render(f, f.area());
             }
-        }
-        if model.running_state == RunningState::Stopped {
+        })?;
+        app.handle_events()?;
+        if app.should_stop {
             break;
         }
     }
@@ -41,20 +38,52 @@ pub async fn run() -> color_eyre::Result<()> {
     Ok(())
 }
 
-pub fn init_terminal() -> color_eyre::Result<Terminal<impl Backend>> {
+impl App {
+    fn new() -> Self {
+        Self {
+            components: vec![Box::new(Counter::default())],
+            should_stop: false,
+        }
+    }
+
+    fn handle_events(&mut self) -> color_eyre::Result<()> {
+        if event::poll(Duration::from_millis(250))?
+            && let Event::Key(key) = event::read()?
+            && key.kind == event::KeyEventKind::Press
+        {
+            {
+                self.on_key_pressed(key);
+            }
+        }
+        Ok(())
+    }
+
+    fn on_key_pressed(&mut self, key: KeyEvent) {
+        match key.code {
+            KeyCode::Char('q') => self.should_stop = true,
+            _ => {
+                for component in &mut self.components {
+                    component.on_key_pressed(key);
+                }
+            }
+        }
+    }
+}
+
+fn init_terminal() -> color_eyre::Result<Terminal<impl Backend>> {
     enable_raw_mode()?;
     io::stdout().execute(EnterAlternateScreen)?;
     let terminal = Terminal::new(CrosstermBackend::new(io::stdout()))?;
     Ok(terminal)
 }
 
-pub fn restore_terminal() -> color_eyre::Result<()> {
+fn restore_terminal() -> color_eyre::Result<()> {
     io::stdout().execute(LeaveAlternateScreen)?;
     disable_raw_mode()?;
     Ok(())
 }
 
-pub fn install_panic_hook() {
+fn install_panic_hook() {
     let original_hook = panic::take_hook();
     panic::set_hook(Box::new(move |panic_info| {
         io::stdout().execute(LeaveAlternateScreen).unwrap();
