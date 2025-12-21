@@ -1,0 +1,15 @@
+[project]
+name = "cozyreq"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = []
+
+[project.scripts]
+cozyreq = "app.main:main"
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.36.1",
+    "pytest>=9.0.2",
+    "ruff>=0.14.10",
+]

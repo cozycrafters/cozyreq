@@ -13,6 +13,7 @@ You can easily install the dependencies:
 ```bash
 mise trust
 mise install
+uv sync
 ```
 
 ## Usage
@@ -20,13 +21,13 @@ mise install
 Run the application locally:
 
 ```bash
-cargo run
+python -m app.main
 ```
 
 Run the tests:
 
 ```bash
-cargo test
+pytest
 ```
 
 ### Documentation
