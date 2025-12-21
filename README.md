@@ -21,7 +21,7 @@ uv sync
 Run the application locally:
 
 ```bash
-python -m app.main
+cozyreq
 ```
 
 Run the tests:
@@ -35,7 +35,7 @@ pytest
 To run the documentation locally, run:
 
 ```bash
-uvx zensical serve
+zensical serve
 ```
 
 Open [localhost:8000](http://localhost:8000) in your browser.
