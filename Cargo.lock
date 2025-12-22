@@ -183,11 +183,6 @@ version = "0.1.0"
 dependencies = [
  "color-eyre",
  "cozyreq_tui",
- "crossterm 0.29.0",
- "ratatui",
- "reqwest",
- "serde",
- "serde_json",
  "tokio",
 ]
 
