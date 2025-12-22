@@ -8,7 +8,7 @@ use ratatui::{
 
 #[test]
 fn test_render_app() {
-    let app = App::new();
+    let app = App::default();
     let mut terminal = Terminal::new(TestBackend::new(80, 20)).unwrap();
     terminal
         .draw(|frame| frame.render_widget(&app, frame.area()))
@@ -18,7 +18,7 @@ fn test_render_app() {
 
 #[test]
 fn test_render_app_after_j_pressed_three_times() {
-    let mut app = App::new();
+    let mut app = App::default();
     for _ in 0..3 {
         app.on_key_pressed(KeyEvent::from(KeyCode::Char('j')));
     }

@@ -17,24 +17,25 @@ use crate::components::{Component, counter::Counter};
 
 mod components;
 
-#[derive(Default)]
 pub struct App {
     components: Vec<Box<dyn Component>>,
     should_stop: bool,
 }
 
-impl App {
-    pub fn new() -> Self {
+impl Default for App {
+    fn default() -> Self {
         Self {
             components: vec![Box::new(Counter::default())],
             should_stop: false,
         }
     }
+}
 
+impl App {
     pub async fn run(&mut self) -> color_eyre::Result<()> {
         install_panic_hook();
         let mut terminal = init_terminal()?;
-        let mut app = App::new();
+        let mut app = App::default();
         loop {
             terminal.draw(|f| f.render_widget(&app, f.area()))?;
             app.handle_events()?;
