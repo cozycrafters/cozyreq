@@ -13,7 +13,7 @@ use ratatui::{
     widgets::WidgetRef,
 };
 
-use crate::components::{Component, counter::Counter};
+use crate::components::{Component, prompt::Prompt};
 
 mod components;
 
@@ -25,7 +25,7 @@ pub struct App {
 impl Default for App {
     fn default() -> Self {
         Self {
-            components: vec![Box::new(Counter::default())],
+            components: vec![Box::new(Prompt::default())],
             should_stop: false,
         }
     }
@@ -61,7 +61,7 @@ impl App {
 
     pub fn on_key_pressed(&mut self, key: KeyEvent) {
         match key.code {
-            KeyCode::Char('q') => self.should_stop = true,
+            KeyCode::Esc => self.should_stop = true,
             _ => {
                 for component in &mut self.components {
                     component.on_key_pressed(key);
