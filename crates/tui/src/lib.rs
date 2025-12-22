@@ -1,59 +1,101 @@
-mod events;
-mod model;
-mod view;
+use std::{io, panic, time::Duration};
 
-use color_eyre::Result;
-use crossterm::{
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
+use ratatui::{
+    Terminal,
+    buffer::Buffer,
+    crossterm::{
+        ExecutableCommand,
+        event::{self, Event, KeyCode, KeyEvent},
+        terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
+    },
+    layout::Rect,
+    prelude::{Backend, CrosstermBackend},
+    widgets::WidgetRef,
 };
-use ratatui::{Terminal, backend::CrosstermBackend};
-use std::{io, panic};
 
-use crate::events::handle_event;
-use crate::model::{RunningState, create_dummy_model, update};
-use crate::view::view;
+use crate::components::{Component, counter::Counter};
 
-pub fn run() -> Result<()> {
-    // Install panic hook
-    let original_hook = panic::take_hook();
-    panic::set_hook(Box::new(move |panic_info| {
-        execute!(io::stdout(), LeaveAlternateScreen).unwrap();
-        disable_raw_mode().unwrap();
-        original_hook(panic_info);
-    }));
+mod components;
 
-    // Setup terminal
-    enable_raw_mode()?;
-    let mut stdout = io::stdout();
-    execute!(stdout, EnterAlternateScreen)?;
-    let backend = CrosstermBackend::new(stdout);
-    let mut terminal = Terminal::new(backend)?;
+#[derive(Default)]
+pub struct App {
+    components: Vec<Box<dyn Component>>,
+    should_stop: bool,
+}
 
-    // Create app with dummy data
-    let mut model = create_dummy_model();
-
-    // Main loop
-    loop {
-        // Render the current view
-        terminal.draw(|f| view(&model, f))?;
-
-        // Handle events and map to a Message
-        let mut current_msg = handle_event(&model)?;
-
-        // Process updates as long as they return a non-None message
-        while current_msg.is_some() {
-            current_msg = update(&mut model, current_msg.unwrap());
-        }
-
-        // Check if we should quit
-        if model.running_state == RunningState::Done {
-            break;
+impl App {
+    pub fn new() -> Self {
+        Self {
+            components: vec![Box::new(Counter::default())],
+            should_stop: false,
         }
     }
 
-    // Restore terminal
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
+    pub async fn run(&mut self) -> color_eyre::Result<()> {
+        install_panic_hook();
+        let mut terminal = init_terminal()?;
+        let mut app = App::new();
+        loop {
+            terminal.draw(|f| f.render_widget(&app, f.area()))?;
+            app.handle_events()?;
+            if app.should_stop {
+                break;
+            }
+        }
+        restore_terminal()?;
+        Ok(())
+    }
+
+    fn handle_events(&mut self) -> color_eyre::Result<()> {
+        if event::poll(Duration::from_millis(250))?
+            && let Event::Key(key) = event::read()?
+            && key.kind == event::KeyEventKind::Press
+        {
+            {
+                self.on_key_pressed(key);
+            }
+        }
+        Ok(())
+    }
+
+    fn on_key_pressed(&mut self, key: KeyEvent) {
+        match key.code {
+            KeyCode::Char('q') => self.should_stop = true,
+            _ => {
+                for component in &mut self.components {
+                    component.on_key_pressed(key);
+                }
+            }
+        }
+    }
+}
+
+impl WidgetRef for App {
+    fn render_ref(&self, area: Rect, buf: &mut Buffer) {
+        for component in &self.components {
+            component.render_ref(area, buf);
+        }
+    }
+}
+
+fn init_terminal() -> color_eyre::Result<Terminal<impl Backend>> {
+    enable_raw_mode()?;
+    io::stdout().execute(EnterAlternateScreen)?;
+    let terminal = Terminal::new(CrosstermBackend::new(io::stdout()))?;
+    Ok(terminal)
+}
+
+fn restore_terminal() -> color_eyre::Result<()> {
+    io::stdout().execute(LeaveAlternateScreen)?;
     disable_raw_mode()?;
     Ok(())
+}
+
+fn install_panic_hook() {
+    let original_hook = panic::take_hook();
+    panic::set_hook(Box::new(move |panic_info| {
+        io::stdout().execute(LeaveAlternateScreen).unwrap();
+        disable_raw_mode().unwrap();
+        original_hook(panic_info);
+    }));
 }

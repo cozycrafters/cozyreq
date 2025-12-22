@@ -1,11 +1,11 @@
 use ratatui::{
-    Frame,
+    buffer::Buffer,
     crossterm::event::{KeyCode, KeyEvent},
     layout::Rect,
-    widgets::Paragraph,
+    widgets::{Paragraph, Widget, WidgetRef},
 };
 
-use crate::tui::components::Component;
+use crate::components::Component;
 
 #[derive(Default)]
 pub(crate) struct Counter {
@@ -32,8 +32,10 @@ impl Component for Counter {
             _ => {}
         }
     }
+}
 
-    fn render(&mut self, frame: &mut Frame, area: Rect) {
-        frame.render_widget(Paragraph::new(format!("Counter: {}", self.state)), area);
+impl WidgetRef for Counter {
+    fn render_ref(&self, area: Rect, buf: &mut Buffer) {
+        Paragraph::new(format!("Counter: {}", self.state)).render(area, buf);
     }
 }
