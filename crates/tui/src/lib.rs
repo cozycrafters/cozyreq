@@ -58,7 +58,7 @@ impl App {
         Ok(())
     }
 
-    fn on_key_pressed(&mut self, key: KeyEvent) {
+    pub fn on_key_pressed(&mut self, key: KeyEvent) {
         match key.code {
             KeyCode::Char('q') => self.should_stop = true,
             _ => {
