@@ -1,27 +1,27 @@
 # Agent Guidelines for CozyReq
 
-## Build/Test/Lint Commands
-- Install dependencies: `uv sync`
-- Add dependency: `uv add <package>` (or `uv add --dev <package>` for dev deps)
-- Remove dependency: `uv remove <package>`
-- Run app: `cozyreq` (or `uv run cozyreq`)
-- Run tests: `uv run pytest`
-- Run single test: `uv run pytest tests/path/to/test_file.py::test_function_name`
-- Format check: `uv run ruff format --check`
-- Format fix: `uv run ruff format`
-- Lint: `uv run ruff check`
-- Type check: `uv run basedpyright`
-- Docs: `uv zensical serve` (opens at localhost:8000)
+## Build/Test Commands
+- **Build**: `cargo build`
+- **Run**: `cargo run`
+- **Test all**: `cargo test`
+- **Test single**: `cargo test test_name`
+- **Format**: `cargo fmt`
+- **Lint**: `cargo clippy -- -D warnings`
+- **Format check**: `cargo fmt -- --check`
+- **Add dependency**: `cargo add <crate>` (optionally specify version with `@version`)
+- **Remove dependency**: `cargo remove <crate>`
 
 ## Code Style
-- Python 3.14+ required
-- Indentation: 4 spaces for Python, 2 spaces for other files (see .editorconfig)
-- Line endings: LF, UTF-8 encoding, final newline required
-- Format: Use `ruff format` for automatic formatting
-- Linting: Follow `ruff check` recommendations
-- Type hints: Required, validated with `basedpyright`
-- Imports: Standard library first, then third-party, then local (separated by blank lines)
-- Use `typing.override` decorator for overridden methods
-- Project structure: Source code in `src/cozyreq/`, tests in `tests/`
-- Entry point: `src/cozyreq/cli.py` with `main()` function
-- Async tests: Use `pytest-asyncio` (asyncio_mode = "auto" is configured)
+- **Edition**: Rust 2024
+- **Formatting**: Use `cargo fmt` (standard rustfmt rules)
+- **Imports**: Group by std → external crates → crate modules; alphabetical order
+- **Types**: Explicit types in struct fields, inference OK in local variables
+- **Naming**: snake_case (functions/vars), PascalCase (types/enums), SCREAMING_SNAKE_CASE (constants)
+- **Error handling**: Use `color_eyre::Result<T>` for fallible functions; propagate with `?`
+- **Documentation**: Doc comments (`///`) for public items, explain "why" not "what"
+- **Testing**: Place tests in `#[cfg(test)] mod tests` within same file; name tests descriptively
+
+## Project Structure
+- Workspace with crates in `crates/` directory
+- Main binary in `crates/cozyreq/src/main.rs`
+- TUI logic in `crates/cozyreq/src/tui.rs`

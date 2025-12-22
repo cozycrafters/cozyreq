@@ -13,7 +13,6 @@ You can easily install the dependencies:
 ```bash
 mise trust
 mise install
-uv sync
 ```
 
 ## Usage
@@ -21,13 +20,13 @@ uv sync
 Run the application locally:
 
 ```bash
-cozyreq
+cargo run
 ```
 
 Run the tests:
 
 ```bash
-pytest
+cargo test
 ```
 
 ### Documentation
@@ -35,7 +34,7 @@ pytest
 To run the documentation locally, run:
 
 ```bash
-zensical serve
+uvx zensical serve
 ```
 
 Open [localhost:8000](http://localhost:8000) in your browser.
