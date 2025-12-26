@@ -1,12 +1,14 @@
 """Log table widget - displays logs in a DataTable with filtering."""
 
+from typing import override
+
 from rich.text import Text
 from textual.widgets import DataTable
 
 from ..models import LogEntry, LogType
 
 
-class LogTable(DataTable):
+class LogTable(DataTable[str | Text]):
     """A table displaying log entries with filtering and search."""
 
     def __init__(
@@ -27,17 +29,18 @@ class LogTable(DataTable):
             classes: Widget CSS classes.
         """
         super().__init__(name=name, id=id, classes=classes, zebra_stripes=True)
-        self.logs = logs
-        self._filtered_logs = logs.copy()
+        self.logs: list[LogEntry] = logs
+        self._filtered_logs: list[LogEntry] = logs.copy()
         self._current_filters: set[LogType] = {"INFO", "TOOL", "ERROR", "DEBUG"}
-        self._current_search = ""
+        self._current_search: str = ""
 
+    @override
     def on_mount(self) -> None:
         """Set up the table when mounted."""
         # Add columns
-        self.add_column("Time", width=10)
-        self.add_column("Type", width=6)
-        self.add_column("Message")
+        _ = self.add_column("Time", width=10)
+        _ = self.add_column("Type", width=6)
+        _ = self.add_column("Message")
 
         # Populate rows
         self._update_rows()
@@ -90,7 +93,7 @@ class LogTable(DataTable):
             message_text.append(self._truncate_message(log.message))
 
             # Add row
-            self.add_row(
+            _ = self.add_row(
                 time_str,
                 type_text,
                 message_text,

@@ -1,10 +1,10 @@
 """Main TUI application for CozyReq."""
 
-from typing import override
+from typing import ClassVar, override
 
 from rich.text import Text
 from textual.app import App, ComposeResult
-from textual.binding import Binding
+from textual.binding import Binding, BindingType
 from textual.widgets import Footer, Static
 
 from .database import get_database_path, get_latest_run, get_logs, get_tool_calls
@@ -14,7 +14,7 @@ from .screens import LogsScreen, ToolCallsScreen
 class Tui(App[None]):
     """CozyReq TUI application."""
 
-    CSS = """
+    CSS: ClassVar[str] = """
     .left-pane {
         width: 35%;
         border-right: solid $accent;
@@ -37,7 +37,7 @@ class Tui(App[None]):
     }
     """
 
-    BINDINGS = [
+    BINDINGS: ClassVar[list[BindingType]] = [
         Binding("1", "show_tool_calls", "Tool Calls", show=True),
         Binding("2", "show_logs", "Logs", show=True),
         Binding("q", "quit", "Quit", show=True),
@@ -47,7 +47,7 @@ class Tui(App[None]):
         """Initialize the TUI app."""
         super().__init__()
         self.run_id: str | None = None
-        self.current_screen_name = "tool_calls"
+        self.current_screen_name: str = "tool_calls"
 
     @override
     def compose(self) -> ComposeResult:
@@ -79,10 +79,10 @@ class Tui(App[None]):
 
             header = self.query_one("#app-header", Static)
             header_text = Text()
-            header_text.append("AI Agent Monitor", style="bold cyan")
-            header_text.append(f"  Run #{latest_run.run_number}", style="yellow")
-            header_text.append(f" │ Duration: {duration_str}", style="dim")
-            header_text.append(
+            _ = header_text.append("AI Agent Monitor", style="bold cyan")
+            _ = header_text.append(f"  Run #{latest_run.run_number}", style="yellow")
+            _ = header_text.append(f" │ Duration: {duration_str}", style="dim")
+            _ = header_text.append(
                 f" │ Status: {latest_run.status}",
                 style="green" if latest_run.status == "completed" else "yellow",
             )

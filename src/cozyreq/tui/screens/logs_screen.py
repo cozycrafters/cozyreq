@@ -1,5 +1,7 @@
 """Logs screen - view showing execution logs with filtering."""
 
+from typing import override
+
 from textual.app import ComposeResult
 from textual.containers import Vertical
 from textual.screen import Screen
@@ -8,7 +10,7 @@ from ..models import LogEntry
 from ..widgets import FilterChanged, LogFilterBar, LogTable, SearchChanged
 
 
-class LogsScreen(Screen):
+class LogsScreen(Screen[None]):
     """Screen displaying execution logs with filtering and search."""
 
     def __init__(
@@ -29,8 +31,9 @@ class LogsScreen(Screen):
             classes: Screen CSS classes.
         """
         super().__init__(name=name, id=id, classes=classes)
-        self.logs = logs
+        self.logs: list[LogEntry] = logs
 
+    @override
     def compose(self) -> ComposeResult:
         """Compose the screen with filter bar and log table."""
         with Vertical(id="logs-container"):

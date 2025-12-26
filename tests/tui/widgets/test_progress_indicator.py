@@ -1,4 +1,6 @@
+from typing import cast
 from textual.app import App, ComposeResult
+from rich.text import Text
 
 from cozyreq.tui.widgets.progress_indicator import ProgressIndicator
 
@@ -72,7 +74,7 @@ async def test_progress_indicator_text_format():
     app = ProgressApp()
     async with app.run_test():
         indicator = app.query_one(ProgressIndicator)
-        text = str(indicator.renderable)
+        text = str(getattr(indicator, "renderable"))
         # Should contain: progress bar, numbers, and percentage
         assert "8/12" in text
         assert "66%" in text

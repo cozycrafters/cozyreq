@@ -1,8 +1,9 @@
 from datetime import datetime
+from typing import cast
 
 from textual.app import App, ComposeResult
 
-from cozyreq.tui.models import LogEntry
+from cozyreq.tui.models import LogEntry, LogType
 from cozyreq.tui.widgets.log_table import LogTable
 
 
@@ -13,7 +14,7 @@ async def test_log_table_rendering():
             id="log-001",
             run_id="run-001",
             timestamp=datetime(2024, 12, 26, 12, 34, 0),
-            log_type="INFO",
+            log_type=cast(LogType, "INFO"),
             message="Agent initialized",
             metadata='{"model": "claude"}',
         ),
@@ -21,7 +22,7 @@ async def test_log_table_rendering():
             id="log-002",
             run_id="run-001",
             timestamp=datetime(2024, 12, 26, 12, 34, 1),
-            log_type="TOOL",
+            log_type=cast(LogType, "TOOL"),
             message="⚡ web_search (#1)",
             metadata=None,
         ),
@@ -33,23 +34,24 @@ async def test_log_table_rendering():
 
     app = TableApp()
     async with app.run_test():
-        table = app.query_one(LogTable)
+        table = cast(LogTable, app.query_one(LogTable))
         assert table is not None
         assert len(table.logs) == 2
 
 
 async def test_log_table_filtering():
     """Test filtering logs by type."""
+    log_types = ["INFO", "TOOL", "ERROR", "DEBUG", "INFO"]
     logs = [
         LogEntry(
             id=f"log-{i:03d}",
             run_id="run-001",
             timestamp=datetime(2024, 12, 26, 12, 34, i),
-            log_type=log_type,
+            log_type=cast(LogType, log_type),
             message=f"Message {i}",
             metadata=None,
         )
-        for i, log_type in enumerate(["INFO", "TOOL", "ERROR", "DEBUG", "INFO"])
+        for i, log_type in enumerate(log_types)
     ]
 
     class TableApp(App[None]):
@@ -58,7 +60,7 @@ async def test_log_table_filtering():
 
     app = TableApp()
     async with app.run_test():
-        table = app.query_one(LogTable)
+        table = cast(LogTable, app.query_one(LogTable))
 
         # Filter to only INFO
         table.filter_logs({"INFO"})
@@ -109,7 +111,7 @@ async def test_log_table_search():
 
     app = TableApp()
     async with app.run_test():
-        table = app.query_one(LogTable)
+        table = cast(LogTable, app.query_one(LogTable))
 
         # Search for "initialized"
         table.search_logs("initialized")
@@ -133,7 +135,7 @@ async def test_log_table_empty():
 
     app = TableApp()
     async with app.run_test():
-        table = app.query_one(LogTable)
+        table = cast(LogTable, app.query_one(LogTable))
         assert table.row_count == 0
 
 
@@ -172,7 +174,7 @@ async def test_log_table_combined_filter_and_search():
 
     app = TableApp()
     async with app.run_test():
-        table = app.query_one(LogTable)
+        table = cast(LogTable, app.query_one(LogTable))
 
         # Filter to INFO only
         table.filter_logs({"INFO"})

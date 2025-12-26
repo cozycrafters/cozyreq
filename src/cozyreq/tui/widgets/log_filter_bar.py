@@ -1,6 +1,9 @@
 """Log filter bar widget - filter controls and search for logs."""
 
+from typing import override
+
 from textual.containers import Horizontal
+from textual.app import ComposeResult
 from textual.message import Message
 from textual.widgets import Button, Input
 
@@ -9,6 +12,8 @@ from ..models import LogType
 
 class FilterChanged(Message):
     """Message posted when active filters change."""
+
+    active_filters: set[LogType]
 
     def __init__(self, active_filters: set[LogType]) -> None:
         """
@@ -24,6 +29,8 @@ class FilterChanged(Message):
 class SearchChanged(Message):
     """Message posted when search query changes."""
 
+    query: str
+
     def __init__(self, query: str) -> None:
         """
         Initialize the message.
@@ -37,6 +44,8 @@ class SearchChanged(Message):
 
 class LogFilterBar(Horizontal):
     """Filter controls and search input for logs."""
+
+    active_filters: set[LogType]
 
     def __init__(
         self,
@@ -55,9 +64,10 @@ class LogFilterBar(Horizontal):
         """
         super().__init__(name=name, id=id, classes=classes)
         # All filters active by default
-        self.active_filters: set[LogType] = {"INFO", "TOOL", "ERROR", "DEBUG"}
+        self.active_filters = {"INFO", "TOOL", "ERROR", "DEBUG"}
 
-    def compose(self):
+    @override
+    def compose(self) -> ComposeResult:
         """Compose the filter bar with buttons and search input."""
         # Filter buttons
         yield Button("All ▾", id="filter-all", variant="primary")
@@ -85,7 +95,7 @@ class LogFilterBar(Horizontal):
         self._update_button_styles()
 
         # Post message
-        self.post_message(FilterChanged(self.active_filters.copy()))
+        _ = self.post_message(FilterChanged(self.active_filters.copy()))
 
     def set_all_filters(self, active: bool) -> None:
         """
@@ -100,7 +110,7 @@ class LogFilterBar(Horizontal):
             self.active_filters = set()
 
         self._update_button_styles()
-        self.post_message(FilterChanged(self.active_filters.copy()))
+        _ = self.post_message(FilterChanged(self.active_filters.copy()))
 
     def _update_button_styles(self) -> None:
         """Update button CSS classes based on active filters."""
@@ -115,9 +125,9 @@ class LogFilterBar(Horizontal):
             try:
                 button = self.query_one(f"#{button_id}", Button)
                 if log_type in self.active_filters:
-                    button.add_class("active")
+                    _ = button.add_class("active")
                 else:
-                    button.remove_class("active")
+                    _ = button.remove_class("active")
             except Exception:
                 pass  # Button not found yet
 
@@ -143,4 +153,4 @@ class LogFilterBar(Horizontal):
     def on_input_changed(self, event: Input.Changed) -> None:
         """Handle search input changes."""
         if event.input.id == "log-search":
-            self.post_message(SearchChanged(event.value))
+            _ = self.post_message(SearchChanged(event.value))

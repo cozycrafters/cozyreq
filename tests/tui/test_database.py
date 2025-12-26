@@ -34,7 +34,7 @@ def sample_data(temp_db: Path) -> str:
 
     # Insert agent run
     run_id = "123e4567-e89b-12d3-a456-426614174000"
-    cursor.execute(
+    _ = cursor.execute(
         """
         INSERT INTO agent_runs (id, run_number, start_time, end_time, status)
         VALUES (?, ?, ?, ?, ?)
@@ -88,7 +88,7 @@ def sample_data(temp_db: Path) -> str:
         ),
     ]
 
-    cursor.executemany(
+    _ = cursor.executemany(
         """
         INSERT INTO tool_calls 
         (id, run_id, sequence_number, tool_name, status, timestamp, duration, request, response, size, summary, result_summary)
@@ -141,7 +141,7 @@ def sample_data(temp_db: Path) -> str:
         ),
     ]
 
-    cursor.executemany(
+    _ = cursor.executemany(
         """
         INSERT INTO logs (id, run_id, timestamp, log_type, message, metadata)
         VALUES (?, ?, ?, ?, ?, ?)
@@ -169,19 +169,21 @@ def test_initialize_database(temp_db: Path):
     cursor = conn.cursor()
 
     # Check agent_runs table exists
-    cursor.execute(
+    _ = cursor.execute(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='agent_runs'"
     )
     assert cursor.fetchone() is not None
 
     # Check tool_calls table exists
-    cursor.execute(
+    _ = cursor.execute(
         "SELECT name FROM sqlite_master WHERE type='table' AND name='tool_calls'"
     )
     assert cursor.fetchone() is not None
 
     # Check logs table exists
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='logs'")
+    _ = cursor.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='logs'"
+    )
     assert cursor.fetchone() is not None
 
     conn.close()
@@ -207,11 +209,12 @@ def test_get_agent_run_not_found(temp_db: Path):
 
 def test_get_latest_run(temp_db: Path, sample_data: str):
     """Test retrieving the latest run."""
+    _ = sample_data
     # Add another run with higher run_number
     conn = sqlite3.connect(temp_db)
     cursor = conn.cursor()
     new_run_id = "223e4567-e89b-12d3-a456-426614174000"
-    cursor.execute(
+    _ = cursor.execute(
         """
         INSERT INTO agent_runs (id, run_number, start_time, end_time, status)
         VALUES (?, ?, ?, ?, ?)

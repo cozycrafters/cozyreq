@@ -31,8 +31,8 @@ class StatusBadge(Static):
             classes: Widget CSS classes.
         """
         super().__init__(name=name, id=id, classes=classes)
-        self.status_type = status_type
-        self.text = text
+        self.status_type: StatusType = status_type
+        self.text: str = text
         self._update_renderable()
 
     def _update_renderable(self) -> None:
@@ -59,7 +59,6 @@ class StatusBadge(Static):
             else "bright_black",
         )
 
-        self.renderable = rich_text
         self.update(rich_text)
 
     def update_status(self, status_type: StatusType, text: str) -> None:

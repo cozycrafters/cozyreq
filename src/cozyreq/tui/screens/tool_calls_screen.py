@@ -1,5 +1,7 @@
 """Tool calls screen - main view showing tool call timeline and details."""
 
+from typing import override
+
 from textual.app import ComposeResult
 from textual.containers import Horizontal
 from textual.screen import Screen
@@ -8,7 +10,7 @@ from ..models import ToolCall
 from ..widgets import ToolCallList, ToolCallSelected, ToolDetailsPanel
 
 
-class ToolCallsScreen(Screen):
+class ToolCallsScreen(Screen[None]):
     """Screen displaying tool calls timeline and details."""
 
     def __init__(
@@ -29,8 +31,9 @@ class ToolCallsScreen(Screen):
             classes: Screen CSS classes.
         """
         super().__init__(name=name, id=id, classes=classes)
-        self.tool_calls = tool_calls
+        self.tool_calls: list[ToolCall] = tool_calls
 
+    @override
     def compose(self) -> ComposeResult:
         """Compose the screen with tool call list and details panel."""
         with Horizontal(id="tool-calls-container"):

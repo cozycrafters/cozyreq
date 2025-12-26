@@ -29,9 +29,9 @@ class ProgressIndicator(Static):
             classes: Widget CSS classes.
         """
         super().__init__(name=name, id=id, classes=classes)
-        self.total = total
-        self.completed = completed
-        self.bar_width = bar_width
+        self.total: int = total
+        self.completed: int = completed
+        self.bar_width: int = bar_width
         self._update_renderable()
 
     @property
@@ -59,8 +59,7 @@ class ProgressIndicator(Static):
         # Create text representation
         text = f"[{bar}] {self.completed}/{self.total} {percentage}%"
 
-        self.renderable = Text(text, style="bright_blue")
-        self.update(self.renderable)
+        self.update(Text(text, style="bright_blue"))
 
     def update_progress(self, total: int, completed: int) -> None:
         """

@@ -18,13 +18,13 @@ def create_sample_database(db_path: Path | None = None) -> None:
     cursor = conn.cursor()
 
     # Clear existing data
-    cursor.execute("DELETE FROM logs")
-    cursor.execute("DELETE FROM tool_calls")
-    cursor.execute("DELETE FROM agent_runs")
+    _ = cursor.execute("DELETE FROM logs")
+    _ = cursor.execute("DELETE FROM tool_calls")
+    _ = cursor.execute("DELETE FROM agent_runs")
 
     # Insert sample agent run
     run_id = "123e4567-e89b-12d3-a456-426614174000"
-    cursor.execute(
+    _ = cursor.execute(
         """
         INSERT INTO agent_runs (id, run_number, start_time, end_time, status)
         VALUES (?, ?, ?, ?, ?)
@@ -204,7 +204,7 @@ def create_sample_database(db_path: Path | None = None) -> None:
         ),
     ]
 
-    cursor.executemany(
+    _ = cursor.executemany(
         """
         INSERT INTO tool_calls
         (id, run_id, sequence_number, tool_name, status, timestamp, duration, request, response, size, summary, result_summary)
@@ -401,7 +401,7 @@ def create_sample_database(db_path: Path | None = None) -> None:
         ),
     ]
 
-    cursor.executemany(
+    _ = cursor.executemany(
         """
         INSERT INTO logs (id, run_id, timestamp, log_type, message, metadata)
         VALUES (?, ?, ?, ?, ?, ?)

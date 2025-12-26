@@ -1,4 +1,6 @@
+from typing import cast
 from textual.app import App, ComposeResult
+from rich.text import Text
 
 from cozyreq.tui.widgets.status_badge import StatusBadge
 
@@ -15,7 +17,7 @@ async def test_status_badge_success():
         badge = app.query_one(StatusBadge)
         assert badge.status_type == "success"
         assert badge.text == "Success"
-        assert "✓" in badge.renderable
+        assert "✓" in str(getattr(badge, "renderable"))
 
 
 async def test_status_badge_running():
@@ -29,7 +31,7 @@ async def test_status_badge_running():
     async with app.run_test():
         badge = app.query_one(StatusBadge)
         assert badge.status_type == "running"
-        assert "⚡" in badge.renderable
+        assert "⚡" in str(getattr(badge, "renderable"))
 
 
 async def test_status_badge_queued():
@@ -43,7 +45,7 @@ async def test_status_badge_queued():
     async with app.run_test():
         badge = app.query_one(StatusBadge)
         assert badge.status_type == "queued"
-        assert "⏳" in badge.renderable
+        assert "⏳" in str(getattr(badge, "renderable"))
 
 
 async def test_status_badge_failed():
@@ -57,7 +59,7 @@ async def test_status_badge_failed():
     async with app.run_test():
         badge = app.query_one(StatusBadge)
         assert badge.status_type == "failed"
-        assert "❌" in badge.renderable
+        assert "❌" in str(getattr(badge, "renderable"))
 
 
 async def test_status_badge_custom():
@@ -90,4 +92,4 @@ async def test_status_badge_update():
         badge.update_status("success", "Success")
         assert badge.status_type == "success"
         assert badge.text == "Success"
-        assert "✓" in badge.renderable
+        assert "✓" in str(getattr(badge, "renderable"))

@@ -2,8 +2,11 @@
 
 import json
 
+from typing import Any, cast, override
+
 from rich.syntax import Syntax
 from textual.containers import Container, Horizontal
+from textual.app import ComposeResult
 from textual.widgets import Static, TabbedContent, TabPane
 
 from ..models import ToolCall
@@ -31,9 +34,10 @@ class ToolDetailsPanel(Container):
             classes: Widget CSS classes.
         """
         super().__init__(name=name, id=id, classes=classes)
-        self.tool_call = tool_call
+        self.tool_call: ToolCall = tool_call
 
-    def compose(self):
+    @override
+    def compose(self) -> ComposeResult:
         """Compose the panel with header, status badges, and tabs."""
         # Header
         yield Static(
@@ -90,7 +94,7 @@ class ToolDetailsPanel(Container):
         """
         try:
             # Try to parse and pretty-print JSON
-            parsed = json.loads(content)
+            parsed: Any = json.loads(content)
             formatted = json.dumps(parsed, indent=2)
             syntax = Syntax(formatted, "json", theme="monokai", line_numbers=False)
             return Static(syntax, classes="tool-details-content")
@@ -115,7 +119,9 @@ class ToolDetailsPanel(Container):
 
         # Update status badges
         status_container = self.query_one(".tool-details-status", Horizontal)
-        status_badges = list(status_container.query(StatusBadge))
+        status_badges = cast(
+            list[StatusBadge], list(status_container.query(StatusBadge))
+        )
 
         # Update status badge
         status_badges[0].update_status(tool_call.status, tool_call.status.capitalize())
@@ -141,8 +147,8 @@ class ToolDetailsPanel(Container):
         request_pane = self.query_one("#request-tab", TabPane)
         request_content = list(request_pane.query(Static))[0]
         new_request_widget = self._create_content_widget(tool_call.request)
-        request_content.remove()
-        request_pane.mount(new_request_widget)
+        _ = request_content.remove()
+        _ = request_pane.mount(new_request_widget)
 
         response_pane = self.query_one("#response-tab", TabPane)
         response_content = list(response_pane.query(Static))[0]
@@ -150,5 +156,5 @@ class ToolDetailsPanel(Container):
             new_response_widget = self._create_content_widget(tool_call.response)
         else:
             new_response_widget = Static("No response yet", classes="no-response")
-        response_content.remove()
-        response_pane.mount(new_response_widget)
+        _ = response_content.remove()
+        _ = response_pane.mount(new_response_widget)

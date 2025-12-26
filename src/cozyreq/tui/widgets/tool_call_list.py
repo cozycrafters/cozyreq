@@ -2,6 +2,7 @@
 
 from typing import override
 
+from textual.app import ComposeResult
 from textual.containers import VerticalScroll
 from textual.message import Message
 from textual.widgets import Static
@@ -13,6 +14,9 @@ from .tool_call_item import ToolCallItem
 
 class ToolCallSelected(Message):
     """Message posted when a tool call is selected."""
+
+    tool_call: ToolCall
+    index: int
 
     def __init__(self, tool_call: ToolCall, index: int) -> None:
         """
@@ -48,11 +52,11 @@ class ToolCallList(VerticalScroll):
             classes: Widget CSS classes.
         """
         super().__init__(name=name, id=id, classes=classes)
-        self.tool_calls = tool_calls
-        self.selected_index = 0 if tool_calls else -1
+        self.tool_calls: list[ToolCall] = tool_calls
+        self.selected_index: int = 0 if tool_calls else -1
 
     @override
-    def compose(self):
+    def compose(self) -> ComposeResult:
         """Compose the widget with title, progress, and tool call items."""
         # Title
         yield Static(
@@ -119,8 +123,10 @@ class ToolCallList(VerticalScroll):
             new_item.set_selected(True)
 
             # Scroll to make item visible
-            new_item.scroll_visible()
+            _ = new_item.scroll_visible()
 
         # Post message
         if new_index >= 0:
-            self.post_message(ToolCallSelected(self.tool_calls[new_index], new_index))
+            _ = self.post_message(
+                ToolCallSelected(self.tool_calls[new_index], new_index)
+            )

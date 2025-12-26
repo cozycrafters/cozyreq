@@ -29,8 +29,8 @@ class ToolCallItem(Static):
             classes: Widget CSS classes.
         """
         super().__init__(name=name, id=id, classes=classes)
-        self.tool_call = tool_call
-        self.selected = selected
+        self.tool_call: ToolCall = tool_call
+        self.selected: bool = selected
         self._update_renderable()
 
     def _get_status_icon(self) -> tuple[str, str]:
@@ -89,7 +89,6 @@ class ToolCallItem(Static):
             result = self._truncate(self.tool_call.result_summary, 30)
             _ = text.append(f"   {result}", style="bright_black")
 
-        self.renderable = text
         self.update(text)
 
         # Add/remove selected class for styling

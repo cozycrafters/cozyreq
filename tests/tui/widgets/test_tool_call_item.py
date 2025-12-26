@@ -1,9 +1,10 @@
-from datetime import datetime
-
+from typing import cast
 from textual.app import App, ComposeResult
+from rich.text import Text
 
-from cozyreq.tui.models import ToolCall
 from cozyreq.tui.widgets.tool_call_item import ToolCallItem
+from cozyreq.tui.models import ToolCall, StatusType
+from datetime import datetime
 
 
 async def test_tool_call_item_rendering():
@@ -60,7 +61,7 @@ async def test_tool_call_item_selected():
         item = app.query_one(ToolCallItem)
         assert item.selected is True
         # Should contain selection cursor
-        text = str(item.renderable)
+        text = str(getattr(item, "renderable"))
         assert "◄──" in text or item.has_class("selected")
 
 
@@ -79,7 +80,7 @@ async def test_tool_call_item_status_icons():
             run_id="run-001",
             sequence_number=1,
             tool_name="web_search",
-            status=status,  # type: ignore
+            status=cast(StatusType, status),
             timestamp=datetime(2024, 12, 26, 12, 34, 1),
             duration=0.234 if status != "queued" else None,
             request='{"query": "test"}',
@@ -96,7 +97,7 @@ async def test_tool_call_item_status_icons():
         app = ItemApp()
         async with app.run_test():
             item = app.query_one(ToolCallItem)
-            text = str(item.renderable)
+            text = str(getattr(item, "renderable"))
             assert icon in text
 
 

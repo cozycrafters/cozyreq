@@ -143,6 +143,13 @@ def _parse_datetime(dt_str: str | None) -> datetime | None:
     return datetime.fromisoformat(dt_str)
 
 
+def _parse_datetime_required(dt_str: str | None) -> datetime:
+    """Parse ISO 8601 datetime string, raising ValueError if None."""
+    if dt_str is None:
+        raise ValueError("datetime string is None")
+    return datetime.fromisoformat(dt_str)
+
+
 def get_agent_run(run_id: str, db_path: Path | None = None) -> AgentRun:
     """
     Get an agent run by ID.
@@ -172,9 +179,9 @@ def get_agent_run(run_id: str, db_path: Path | None = None) -> AgentRun:
         raise RunNotFoundError(f"Run not found: {run_id}")
 
     return AgentRun(
-        id=row["id"],
-        run_number=row["run_number"],
-        start_time=_parse_datetime(row["start_time"]),  # type: ignore
+        id=str(row["id"]),
+        run_number=int(row["run_number"]),
+        start_time=_parse_datetime_required(row["start_time"]),
         end_time=_parse_datetime(row["end_time"]),
         status=row["status"],  # type: ignore
     )
@@ -207,9 +214,9 @@ def get_latest_run(db_path: Path | None = None) -> AgentRun | None:
         return None
 
     return AgentRun(
-        id=row["id"],
-        run_number=row["run_number"],
-        start_time=_parse_datetime(row["start_time"]),  # type: ignore
+        id=str(row["id"]),
+        run_number=int(row["run_number"]),
+        start_time=_parse_datetime_required(row["start_time"]),
         end_time=_parse_datetime(row["end_time"]),
         status=row["status"],  # type: ignore
     )
@@ -243,17 +250,17 @@ def get_tool_calls(run_id: str, db_path: Path | None = None) -> list[ToolCall]:
 
     return [
         ToolCall(
-            id=row["id"],
-            run_id=row["run_id"],
-            sequence_number=row["sequence_number"],
-            tool_name=row["tool_name"],
+            id=str(row["id"]),
+            run_id=str(row["run_id"]),
+            sequence_number=int(row["sequence_number"]),
+            tool_name=str(row["tool_name"]),
             status=row["status"],  # type: ignore
-            timestamp=_parse_datetime(row["timestamp"]),  # type: ignore
+            timestamp=_parse_datetime_required(row["timestamp"]),
             duration=row["duration"],
-            request=row["request"],
+            request=str(row["request"]),
             response=row["response"],
             size=row["size"],
-            summary=row["summary"],
+            summary=str(row["summary"]),
             result_summary=row["result_summary"],
         )
         for row in rows
@@ -299,11 +306,11 @@ def get_logs(
 
     return [
         LogEntry(
-            id=row["id"],
-            run_id=row["run_id"],
-            timestamp=_parse_datetime(row["timestamp"]),  # type: ignore
+            id=str(row["id"]),
+            run_id=str(row["run_id"]),
+            timestamp=_parse_datetime_required(row["timestamp"]),
             log_type=row["log_type"],  # type: ignore
-            message=row["message"],
+            message=str(row["message"]),
             metadata=row["metadata"],
         )
         for row in rows
@@ -354,11 +361,11 @@ def search_logs(
 
     return [
         LogEntry(
-            id=row["id"],
-            run_id=row["run_id"],
-            timestamp=_parse_datetime(row["timestamp"]),  # type: ignore
+            id=str(row["id"]),
+            run_id=str(row["run_id"]),
+            timestamp=_parse_datetime_required(row["timestamp"]),
             log_type=row["log_type"],  # type: ignore
-            message=row["message"],
+            message=str(row["message"]),
             metadata=row["metadata"],
         )
         for row in rows
@@ -392,25 +399,25 @@ def get_run_statistics(run_id: str, db_path: Path | None = None) -> dict[str, in
     _ = cursor.execute(
         "SELECT COUNT(*) as total FROM tool_calls WHERE run_id = ?", (run_id,)
     )
-    total = cursor.fetchone()["total"]
+    total = int(cursor.fetchone()["total"])
 
     _ = cursor.execute(
         "SELECT COUNT(*) as completed FROM tool_calls WHERE run_id = ? AND status = 'success'",
         (run_id,),
     )
-    completed = cursor.fetchone()["completed"]
+    completed = int(cursor.fetchone()["completed"])
 
     _ = cursor.execute(
         "SELECT COUNT(*) as running FROM tool_calls WHERE run_id = ? AND status = 'running'",
         (run_id,),
     )
-    running = cursor.fetchone()["running"]
+    running = int(cursor.fetchone()["running"])
 
     _ = cursor.execute(
         "SELECT COUNT(*) as failed FROM tool_calls WHERE run_id = ? AND status = 'failed'",
         (run_id,),
     )
-    failed = cursor.fetchone()["failed"]
+    failed = int(cursor.fetchone()["failed"])
 
     conn.close()
 
