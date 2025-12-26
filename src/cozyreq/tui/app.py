@@ -5,7 +5,8 @@ from textual.screen import Screen
 from textual.types import CSSPathType
 from textual.widgets import Footer, Header
 
-from .screens import PromptScreen, RequestsScreen
+from cozyreq.tui.screens.prompt import PromptScreen
+from cozyreq.tui.screens.requests import RequestsScreen
 
 
 class CozyReq(App[None]):
