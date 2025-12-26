@@ -1,13 +1,13 @@
 import typer
 
-from .tui.app import Tui
+import cozyreq.tui.app as tui_app
 
 app = typer.Typer()
 
 
 @app.command()
 def tui():
-    Tui().run()
+    tui_app.app.run()
 
 
 def main():

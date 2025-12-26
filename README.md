@@ -21,7 +21,7 @@ uv sync
 Run the application locally:
 
 ```bash
-cozyreq
+textual run --dev cozyreq.tui.app
 ```
 
 Run the tests:
