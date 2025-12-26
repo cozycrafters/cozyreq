@@ -1,3 +1,9 @@
+from typing import Callable
+from pathlib import PurePath
+
+from textual.app import App
+
+
 async def test_quit():
     """Test pressing Ctrl + q keys quits the app."""
     from cozyreq.tui.app import CozyReq
@@ -8,7 +14,7 @@ async def test_quit():
         await pilot.press("ctrl+q")
 
 
-def test_app(snap_compare):
+def test_app(snap_compare: Callable[[str | PurePath | App[None]], bool]):
     from cozyreq.tui.app import CozyReq
 
     app = CozyReq()
