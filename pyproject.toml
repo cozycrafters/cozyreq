@@ -3,6 +3,7 @@ name = "cozyreq"
 version = "0.1.0"
 requires-python = ">=3.14"
 dependencies = [
+    "pydantic-ai-slim[mistral]>=1.39.0",
     "textual>=6.11.0",
     "typer>=0.20.1",
 ]
