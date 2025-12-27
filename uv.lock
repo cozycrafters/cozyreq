@@ -164,7 +164,9 @@ name = "cozyreq"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "httpx" },
     { name = "pydantic-ai-slim", extra = ["mistral"] },
+    { name = "pyyaml" },
     { name = "textual" },
     { name = "typer" },
 ]
@@ -181,7 +183,9 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "pydantic-ai-slim", extras = ["mistral"], specifier = ">=1.39.0" },
+    { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "textual", specifier = ">=6.11.0" },
     { name = "typer", specifier = ">=0.20.1" },
 ]
