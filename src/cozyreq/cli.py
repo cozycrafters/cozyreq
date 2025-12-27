@@ -26,6 +26,7 @@ def tui():
 def run(url: str):
     """Fetch OpenAPI spec from URL and display available endpoints."""
     try:
+        # Fetch and parse with Pydantic models
         spec = asyncio.run(openapi.fetch_openapi_spec(url))
         endpoints = openapi.parse_openapi_endpoints(spec)
         formatted_output = openapi.format_endpoints_list(endpoints)

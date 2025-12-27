@@ -1,10 +1,10 @@
-import typing
 import httpx
 import yaml
 import json
 from dataclasses import dataclass
 from rich.console import Console
 from rich.table import Table
+from openapi_pydantic import OpenAPI, parse_obj
 
 
 @dataclass
@@ -34,8 +34,8 @@ class SpecParseError(OpenAPIError):
     pass
 
 
-async def fetch_openapi_spec(url: str) -> dict[str, typing.Any]:
-    """Fetch OpenAPI specification from the given URL or local file."""
+async def fetch_openapi_spec(url: str) -> OpenAPI:
+    """Fetch OpenAPI specification from the given URL or local file and return Pydantic model."""
     try:
         # Handle local file paths
         if not url.startswith(("http://", "https://")):
@@ -49,9 +49,22 @@ async def fetch_openapi_spec(url: str) -> dict[str, typing.Any]:
                 content = f.read()
 
             if url.endswith((".yaml", ".yml")):
-                return yaml.safe_load(content)
+                spec_dict = yaml.safe_load(content)
             else:
-                return json.loads(content)
+                spec_dict = json.loads(content)
+
+            # Parse into Pydantic model
+            try:
+                return parse_obj(spec_dict)
+            except Exception as e:
+                # Check if this is an OpenAPI 2.0 spec (Swagger)
+                if spec_dict.get("swagger") == "2.0":
+                    raise SpecParseError(
+                        "OpenAPI 2.0 (Swagger) specifications are not supported. "
+                        "Please use an OpenAPI 3.0 or 3.1 specification."
+                    )
+                else:
+                    raise SpecParseError(f"Failed to parse OpenAPI specification: {e}")
 
         # Handle HTTP URLs
         async with httpx.AsyncClient() as client:
@@ -61,9 +74,22 @@ async def fetch_openapi_spec(url: str) -> dict[str, typing.Any]:
             content_type = response.headers.get("content-type", "").lower()
 
             if "yaml" in content_type or url.endswith((".yaml", ".yml")):
-                return yaml.safe_load(response.text)
+                spec_dict = yaml.safe_load(response.text)
             else:
-                return response.json()
+                spec_dict = response.json()
+
+            # Parse into Pydantic model
+            try:
+                return parse_obj(spec_dict)
+            except Exception as e:
+                # Check if this is an OpenAPI 2.0 spec (Swagger)
+                if spec_dict.get("swagger") == "2.0":
+                    raise SpecParseError(
+                        "OpenAPI 2.0 (Swagger) specifications are not supported. "
+                        "Please use an OpenAPI 3.0 or 3.1 specification."
+                    )
+                else:
+                    raise SpecParseError(f"Failed to parse OpenAPI specification: {e}")
 
     except httpx.HTTPError as e:
         raise SpecFetchError(f"Failed to fetch OpenAPI spec from {url}: {e}")
@@ -75,41 +101,72 @@ async def fetch_openapi_spec(url: str) -> dict[str, typing.Any]:
         raise OpenAPIError(f"Unexpected error fetching OpenAPI spec: {e}")
 
 
-def parse_openapi_endpoints(spec: dict[str, typing.Any]) -> list[EndpointInfo]:
-    """Parse OpenAPI specification and extract endpoint information."""
+def parse_openapi_endpoints(spec) -> list[EndpointInfo]:
+    """Parse OpenAPI specification and extract endpoint information.
+
+    Accepts either OpenAPI Pydantic model or dict for backward compatibility with tests.
+    """
     endpoints = []
 
-    # Get paths from the spec
-    paths = spec.get("paths", {})
-
-    for path, path_item in paths.items():
-        if not isinstance(path_item, dict):
-            continue
-
-        # Extract operations for each HTTP method
-        for method, operation in path_item.items():
-            if method.lower() not in [
-                "get",
-                "post",
-                "put",
-                "delete",
-                "patch",
-                "head",
-                "options",
-            ]:
+    # Handle both Pydantic model and dict input
+    if hasattr(spec, "paths"):
+        # Pydantic model path
+        if not spec.paths:
+            return endpoints
+        paths = spec.paths
+        for path_str, path_item in paths.items():
+            if not path_item:
                 continue
-
-            if not isinstance(operation, dict):
+            # Extract operations for each HTTP method
+            path_dict = path_item.dict(exclude_none=True)
+            for method, operation in path_dict.items():
+                if method.lower() not in [
+                    "get",
+                    "post",
+                    "put",
+                    "delete",
+                    "patch",
+                    "head",
+                    "options",
+                ]:
+                    continue
+                if not isinstance(operation, dict):
+                    continue
+                endpoint = EndpointInfo(
+                    method=method.upper(),
+                    path=path_str,
+                    summary=operation.get("summary", ""),
+                    description=operation.get("description"),
+                    operation_id=operation.get("operationId"),
+                )
+                endpoints.append(endpoint)
+    else:
+        # Dict path (for backward compatibility with tests)
+        paths = spec.get("paths", {})
+        for path_str, path_item in paths.items():
+            if not isinstance(path_item, dict):
                 continue
-
-            endpoint = EndpointInfo(
-                method=method.upper(),
-                path=path,
-                summary=operation.get("summary", ""),
-                description=operation.get("description"),
-                operation_id=operation.get("operationId"),
-            )
-            endpoints.append(endpoint)
+            for method, operation in path_item.items():
+                if method.lower() not in [
+                    "get",
+                    "post",
+                    "put",
+                    "delete",
+                    "patch",
+                    "head",
+                    "options",
+                ]:
+                    continue
+                if not isinstance(operation, dict):
+                    continue
+                endpoint = EndpointInfo(
+                    method=method.upper(),
+                    path=path_str,
+                    summary=operation.get("summary", ""),
+                    description=operation.get("description"),
+                    operation_id=operation.get("operationId"),
+                )
+                endpoints.append(endpoint)
 
     # Sort by path and method for consistent ordering
     endpoints.sort(key=lambda x: (x.path, x.method))

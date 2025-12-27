@@ -1,5 +1,10 @@
-
 import cozyreq.openapi as openapi
+from openapi_pydantic import parse_obj
+
+
+def create_test_openapi_spec(spec_dict):
+    """Helper to create OpenAPI Pydantic model from test data."""
+    return parse_obj(spec_dict)
 
 
 class TestParseOpenAPIEndpoints:
@@ -16,15 +21,25 @@ class TestParseOpenAPIEndpoints:
                         "summary": "List users",
                         "description": "Get all users",
                         "operationId": "listUsers",
+                        "responses": {"200": {"description": "Success"}},
                     },
-                    "post": {"summary": "Create user", "operationId": "createUser"},
+                    "post": {
+                        "summary": "Create user",
+                        "operationId": "createUser",
+                        "responses": {"201": {"description": "Created"}},
+                    },
                 },
                 "/users/{id}": {
-                    "get": {"summary": "Get user", "operationId": "getUser"}
+                    "get": {
+                        "summary": "Get user",
+                        "operationId": "getUser",
+                        "responses": {"200": {"description": "Success"}},
+                    }
                 },
             },
         }
 
+        # For testing, use dict directly since our function now supports both
         endpoints = openapi.parse_openapi_endpoints(spec)
 
         assert len(endpoints) == 3
@@ -56,7 +71,8 @@ class TestParseOpenAPIEndpoints:
             "paths": {
                 "/users": {
                     "get": {
-                        "summary": "List users"
+                        "summary": "List users",
+                        "responses": {"200": {"description": "Success"}},
                         # No description or operationId
                     }
                 }
