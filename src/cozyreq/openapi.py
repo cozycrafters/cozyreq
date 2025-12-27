@@ -118,7 +118,7 @@ def parse_openapi_endpoints(spec) -> list[EndpointInfo]:
             if not path_item:
                 continue
             # Extract operations for each HTTP method
-            path_dict = path_item.dict(exclude_none=True)
+            path_dict = path_item.model_dump(exclude_none=True)
             for method, operation in path_dict.items():
                 if method.lower() not in [
                     "get",
