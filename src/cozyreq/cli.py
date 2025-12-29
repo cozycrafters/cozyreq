@@ -1,6 +1,9 @@
+import asyncio
+
 import typer
 
 import cozyreq.agent as agent
+import cozyreq.openapi as openapi
 import cozyreq.tui.app as tui_app
 
 app = typer.Typer()
@@ -18,6 +21,20 @@ def pydantic(prompt: str):
 @app.command()
 def tui():
     tui_app.app.run()
+
+
+@app.command()
+def run(url: str):
+    """Fetch OpenAPI spec from URL and display available endpoints."""
+    try:
+        # Fetch and parse with Pydantic models
+        spec = asyncio.run(openapi.fetch_openapi_spec(url))
+        endpoints = openapi.parse_openapi_endpoints(spec)
+        formatted_output = openapi.format_endpoints_list(endpoints)
+        print(formatted_output)
+    except openapi.OpenAPIError as e:
+        print(f"Error: {e}")
+        raise typer.Exit(1)
 
 
 def main():
