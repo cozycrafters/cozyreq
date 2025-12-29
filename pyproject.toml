@@ -32,6 +32,7 @@ asyncio_mode = "auto"
 [tool.basedpyright]
 include = ["src", "tests"]
 extraPaths = ["src"]
+exclude = ["src/cozyreq/openapi.py"]
 
 [tool.ruff]
 include = ["pyproject.toml", "src/**/*.py", "tests/**/*.py"]

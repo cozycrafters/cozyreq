@@ -36,7 +36,7 @@ class SpecParseError(OpenAPIError):
     pass
 
 
-async def fetch_openapi_spec(url: str) -> OpenAPI:  # type: ignore # pyright: ignore
+async def fetch_openapi_spec(url: str) -> OpenAPI:
     """Fetch OpenAPI specification from the given URL or local file and return Pydantic model."""
     try:
         # Handle local file paths
@@ -51,16 +51,16 @@ async def fetch_openapi_spec(url: str) -> OpenAPI:  # type: ignore # pyright: ig
                 content = f.read()
 
             if url.endswith((".yaml", ".yml")):
-                spec_dict = yaml.safe_load(content)  # pyright: ignore[reportAny]
+                spec_dict = yaml.safe_load(content)
             else:
-                spec_dict = json.loads(content)  # pyright: ignore[reportAny]
+                spec_dict = json.loads(content)
 
             # Parse into Pydantic model
             try:
                 return typing.cast(OpenAPI, parse_obj(spec_dict))
             except Exception as e:
                 # Check if this is an OpenAPI 2.0 spec (Swagger)
-                if spec_dict.get("swagger") == "2.0":  # pyright: ignore[reportAny]
+                if spec_dict.get("swagger") == "2.0":
                     raise SpecParseError(
                         "OpenAPI 2.0 (Swagger) specifications are not supported. Please use an OpenAPI 3.0 or 3.1 specification."
                     ) from e
@@ -78,8 +78,11 @@ async def fetch_openapi_spec(url: str) -> OpenAPI:  # type: ignore # pyright: ig
     except Exception as e:
         raise OpenAPIError(f"Unexpected error fetching OpenAPI spec: {e}")
 
+    # This should never be reached due to exception handling above
+    raise OpenAPIError("Unexpected end of function")
 
-def parse_openapi_endpoints(spec: typing.Any) -> list[EndpointInfo]:  # type: ignore # pyright: ignore[reportAny]
+
+def parse_openapi_endpoints(spec: typing.Any) -> list[EndpointInfo]:
     """Parse OpenAPI specification and extract endpoint information.
 
     Accepts either OpenAPI Pydantic model or dict for backward compatibility with tests.
@@ -87,18 +90,18 @@ def parse_openapi_endpoints(spec: typing.Any) -> list[EndpointInfo]:  # type: ig
     endpoints = []
 
     # Handle both Pydantic model and dict input
-    if hasattr(spec, "paths"):  # pyright: ignore[reportAny]
+    if hasattr(spec, "paths"):
         # Pydantic model path
-        if not spec.paths:  # pyright: ignore[reportAny]
-            return endpoints  # pyright: ignore[reportUnknownVariableType]
-        paths = spec.paths  # pyright: ignore[reportAny]
-        for path_str, path_item in paths.items():  # pyright: ignore[reportAny]
+        if not spec.paths:
+            return endpoints
+        paths = spec.paths
+        for path_str, path_item in paths.items():
             if not path_item:
                 continue
             # Extract operations for each HTTP method
-            path_dict = path_item.model_dump(exclude_none=True)  # pyright: ignore[reportAny]
-            for method, operation in path_dict.items():  # pyright: ignore[reportAny]
-                if method.lower() not in [  # pyright: ignore[reportAny]
+            path_dict = path_item.model_dump(exclude_none=True)
+            for method, operation in path_dict.items():
+                if method.lower() not in [
                     "get",
                     "post",
                     "put",
@@ -111,20 +114,20 @@ def parse_openapi_endpoints(spec: typing.Any) -> list[EndpointInfo]:  # type: ig
                 if not isinstance(operation, dict):
                     continue
                 endpoint = EndpointInfo(
-                    method=method.upper(),  # pyright: ignore[reportAny]
-                    path=path_str,  # pyright: ignore[reportAny]
-                    summary=operation.get("summary", ""),  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
-                    description=operation.get("description", ""),  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
-                    operation_id=operation.get("operationId"),  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+                    method=method.upper(),
+                    path=path_str,
+                    summary=operation.get("summary", ""),
+                    description=operation.get("description", ""),
+                    operation_id=operation.get("operationId"),
                 )
-                endpoints.append(endpoint)  # pyright: ignore[reportUnknownMemberType]
+                endpoints.append(endpoint)
     else:
         # Dict path (for backward compatibility with tests)
-        paths = spec.get("paths", {})  # pyright: ignore[reportAny]
-        for path_str, path_item in paths.items():  # pyright: ignore[reportAny]
+        paths = spec.get("paths", {})
+        for path_str, path_item in paths.items():
             if not isinstance(path_item, dict):
                 continue
-            for method, operation in path_item.items():  # pyright: ignore[reportUnknownVariableType]
+            for method, operation in path_item.items():
                 if method.lower() not in [
                     "get",
                     "post",
@@ -147,8 +150,8 @@ def parse_openapi_endpoints(spec: typing.Any) -> list[EndpointInfo]:  # type: ig
                 endpoints.append(endpoint)
 
     # Sort by path and method for consistent ordering
-    endpoints.sort(key=lambda x: (x.path, x.method))  # pyright: ignore[reportUnknownLambdaType, reportUnknownMemberType]
-    return endpoints  # pyright: ignore[reportUnknownVariableType]
+    endpoints.sort(key=lambda x: (x.path, x.method))
+    return endpoints
 
 
 def format_endpoints_list(endpoints: list[EndpointInfo]) -> str:
