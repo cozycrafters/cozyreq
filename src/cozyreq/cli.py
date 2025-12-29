@@ -1,9 +1,10 @@
 import asyncio
+
 import typer
 
 import cozyreq.agent as agent
-import cozyreq.tui.app as tui_app
 import cozyreq.openapi as openapi
+import cozyreq.tui.app as tui_app
 
 app = typer.Typer()
 

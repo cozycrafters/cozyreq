@@ -1,4 +1,4 @@
-import pytest
+import typing
 from openapi_pydantic import parse_obj
 
 import cozyreq.openapi as openapi
@@ -124,7 +124,7 @@ def test_parse_spec_no_paths():
 
 def test_parse_spec_non_operation_fields():
     """Test that non-operation fields in paths are ignored."""
-    spec = {
+    spec: dict[str, typing.Any] = {
         "openapi": "3.0.3",
         "info": {"title": "Test API", "version": "1.0.0"},
         "paths": {
