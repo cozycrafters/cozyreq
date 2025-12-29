@@ -8,12 +8,6 @@ async def run_agent(prompt: str) -> str:
         system_prompt="You are Kimi, an AI assistant created by Moonshot AI.",
     )
 
-    # Add weather tool
-    @agent.tool_plain
-    def get_weather(city: str) -> dict[str, str]:
-        """Retrieve current weather information."""
-        return {"weather": "Sunny"}
-
     # Run the agent with the prompt
     result = await agent.run(prompt)
 
