@@ -16,12 +16,12 @@ cozyreq = "cozyreq.cli:main"
 
 [dependency-groups]
 dev = [
-    "basedpyright>=1.36.1",
     "pytest>=9.0.2",
     "pytest-asyncio>=1.3.0",
     "pytest-textual-snapshot>=1.0.0",
     "ruff>=0.14.10",
     "textual-dev>=1.8.0",
+    "ty>=0.0.14",
 ]
 
 [tool.pytest.ini_options]

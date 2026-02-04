@@ -4,12 +4,12 @@
     "pyright": {
       "disabled": true
     },
-    "basedpyright": {
+    "ty": {
       "command": [
         "uv",
         "run",
-        "basedpyright-langserver",
-        "--stdio"
+        "ty",
+        "server"
       ],
       "extensions": [
         ".py",

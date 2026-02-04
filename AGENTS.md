@@ -10,7 +10,7 @@
 - Format check: `uv run ruff format --check`
 - Format fix: `uv run ruff format`
 - Lint: `uv run ruff check`
-- Type check: `uv run basedpyright`
+- Type check: `uv run ty check`
 - Docs: `uv zensical serve` (opens at localhost:8000)
 
 ## Code Style
@@ -19,7 +19,7 @@
 - Line endings: LF, UTF-8 encoding, final newline required
 - Format: Use `ruff format` for automatic formatting
 - Linting: Follow `ruff check` recommendations
-- Type hints: Required, validated with `basedpyright`
+- Type hints: Required, validated with `ty`
 - Imports: Standard library first, then third-party, then local (separated by blank lines)
 - Use `typing.override` decorator for overridden methods
 - Project structure: Source code in `src/cozyreq/`, tests in `tests/`
