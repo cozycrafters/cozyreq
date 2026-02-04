@@ -25,3 +25,6 @@
 - Project structure: Source code in `src/cozyreq/`, tests in `tests/`
 - Entry point: `src/cozyreq/cli.py` with `main()` function
 - Async tests: Use `pytest-asyncio` (asyncio_mode = "auto" is configured)
+
+## Issue Tracking
+- This project uses **Linear** for issue tracking
