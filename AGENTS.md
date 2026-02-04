@@ -14,17 +14,17 @@ All quality and testing commands can be run from the project root:
 
 - Test: `bun run test`
 - Lint: `bun run lint`
-- Format: `bun run format`
-- Format check: `bun run format:check`
+- Format: `bun run fmt`
+- Format check: `bun run fmt:check`
 - Type check: `bun run type-check`
 
 ### UV (Python)
 
-- Test: `uv run test`
-- Lint: `uv run lint`
-- Format: `uv run format`
-- Format check: `uv run format_check`
-- Type check: `uv run type_check`
+- Test: `pytest`
+- Lint: `ruff check`
+- Format: `ruff format`
+- Format check: `ruff format --check`
+- Type check: `ty check`
 
 ### Cargo (Rust)
 
@@ -42,31 +42,31 @@ All quality and testing commands can be run from the project root:
 - Add dependency: `uv add <package>` (or `uv add --dev <package>` for dev deps)
 - Remove dependency: `uv remove <package>`
 - Run app: `cozyreq` (or `uv run cozyreq`)
-- Run tests: `uv run test`
-- Run single test: `uv run pytest tests/path/to/test_file.py::test_function_name`
-- Format check: `uv run format_check`
-- Format fix: `uv run format`
-- Lint: `uv run lint`
-- Type check: `uv run type_check`
+- Run tests: `pytest`
+- Run single test: `pytest tests/path/to/test_file.py::test_function_name`
+- Format check: `ruff format --check`
+- Format fix: `ruff format`
+- Lint: `ruff check`
+- Type check: `ty check`
 - Docs: `uv zensical serve` (opens at localhost:8000)
 
 ### Apps/API (FastAPI)
 
 - Install dependencies: `uv sync --project apps/api`
 - Add dependency: `uv add --project apps/api <package>`
-- Run dev server: `uv run --project apps/api uvicorn src.main:app --reload --port 8000`
+- Run dev server: `fastapi dev src/main.py` (in apps/api directory)
 
 ## TypeScript Commands (Bun)
 
 ### Apps/Web (Next.js)
 
 - Install dependencies: `bun install` (from root)
-- Run dev server: `bun run --cwd apps/web dev` or `mise run dev:web`
-- Build: `bun run --cwd apps/web build`
-- Start production: `bun run --cwd apps/web start`
+- Run dev server: `bun run dev` (in apps/web directory) or `mise run dev:web`
+- Build: `bun run build` (in apps/web directory)
+- Start production: `bun run start` (in apps/web directory)
 - Lint: `bun run lint`
-- Format: `bun run format`
-- Format check: `bun run format:check`
+- Format: `bun run fmt`
+- Format check: `bun run fmt:check`
 - Type check: `bun run type-check`
 
 ### Root (Workspace Management)
@@ -92,7 +92,7 @@ All quality and testing commands can be run from the project root:
 
 ### Development
 
-- `mise run dev` - Start all services (Supabase + FastAPI + Next.js)
+- `mise run dev` - Start all services (Supabase + API + web) in parallel
 - `mise run dev:web` - Start Next.js only
 - `mise run dev:api` - Start FastAPI only
 - `mise run dev:cli` - Build and run CLI
@@ -102,15 +102,12 @@ All quality and testing commands can be run from the project root:
 - `mise run db:start` - Start Supabase
 - `mise run db:stop` - Stop Supabase
 - `mise run db:reset` - Reset Supabase database
-- `mise run db:migrate` - Run Supabase migrations
 
 ### Testing & Quality (Root Level)
 
-- `mise run test` - Run all test suites (bun + uv + cargo)
+- `mise run test` - Run all test suites (bun + pytest + cargo)
 - `mise run lint` - Run all linters (oxlint + ruff + clippy)
 - `mise run format` - Run all formatters (oxfmt + ruff + rustfmt)
-- `mise run format_check` - Check all formatting
-- `mise run type_check` - Run all type checks (tsc + ty + cargo check)
 
 ### Setup
 
