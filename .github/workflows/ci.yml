@@ -18,31 +18,18 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version-file: .python-version
-      - name: Install dependencies (root)
-        run: uv sync --frozen
-      - name: Install dependencies (apps/api)
-        working-directory: apps/api
-        run: uv sync --frozen
-      - name: Check formatting (ruff) - root
-        run: uv run ruff format --check
-      - name: Check formatting (ruff) - apps/api
-        working-directory: apps/api
-        run: uv run ruff format --check
-      - name: Run linter (ruff) - root
-        run: uv run ruff check
-      - name: Run linter (ruff) - apps/api
-        working-directory: apps/api
-        run: uv run ruff check
-      - name: Run type checks (ty) - root
-        run: uv run ty check
-      - name: Run type checks (ty) - apps/api
-        working-directory: apps/api
-        run: uv run ty check
-      - name: Run tests (pytest) - root
-        run: uv run pytest
-      - name: Run tests (pytest) - apps/api
-        working-directory: apps/api
-        run: uv run pytest
+      - name: Install dependencies
+        run: |
+          uv sync --frozen
+          uv sync --project apps/api --frozen
+      - name: Check formatting
+        run: uv run format_check
+      - name: Run linter
+        run: uv run lint
+      - name: Run type checks
+        run: uv run type_check
+      - name: Run tests
+        run: uv run test
 
   rust:
     name: Rust Build
@@ -58,15 +45,16 @@ jobs:
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: Run clippy check
-        working-directory: apps/cli
-        run: cargo clippy -- -D warnings
+      - name: Check formatting
+        run: cargo format-check
+      - name: Run linter
+        run: cargo lint
+      - name: Run type check
+        run: cargo type-check
       - name: Run tests
-        working-directory: apps/cli
         run: cargo test
       - name: Build CLI
-        working-directory: apps/cli
-        run: cargo build --release
+        run: cargo build --release --manifest-path apps/cli/Cargo.toml
 
   typescript:
     name: TypeScript Build
@@ -76,12 +64,11 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - name: Install dependencies
         run: bun install
-      - name: Run linter (oxlint)
-        working-directory: apps/web
+      - name: Check formatting
+        run: bun run format:check || true
+      - name: Run linter
         run: bun run lint || true
-      - name: Run type check (tsc)
-        working-directory: apps/web
+      - name: Run type check
         run: bun run type-check || true
       - name: Build Next.js app
-        working-directory: apps/web
-        run: bun run build || true
+        run: bun run --cwd apps/web build || true

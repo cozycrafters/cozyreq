@@ -88,49 +88,50 @@ mise run db:reset
 mise run db:migrate
 ```
 
-## Testing
+## Testing & Quality
 
-Run all test suites:
+All testing and quality commands work from the project root:
 
 ```bash
+# Run all test suites (bun test + uv run test + cargo test)
 mise run test
-```
 
-Run specific test suites:
-
-```bash
-mise run test:web    # Next.js tests with oxlint
-mise run test:api    # FastAPI tests
-mise run test:cli    # Rust CLI tests
-```
-
-## Code Quality
-
-### Linting
-
-Run all linters:
-
-```bash
+# Run all linters (oxlint + ruff + clippy)
 mise run lint
-```
 
-Individual linters:
-- `mise run lint:web` - oxlint (TypeScript/JavaScript)
-- `mise run lint:api` - ruff (Python)
-- `mise run lint:cli` - clippy (Rust)
-
-### Formatting
-
-Run all formatters:
-
-```bash
+# Run all formatters (oxfmt + ruff format + rustfmt)
 mise run format
+
+# Check all formatting
+mise run format_check
+
+# Run all type checks (tsc + ty + cargo check)
+mise run type_check
 ```
 
-Individual formatters:
-- `mise run format:web` - oxfmt (TypeScript/JavaScript)
-- `mise run format:api` - ruff format (Python)
-- `mise run format:cli` - rustfmt (Rust)
+### Package Manager Commands
+
+You can also run commands directly with each package manager:
+
+**Bun (TypeScript):**
+- `bun run test` - Run tests (oxlint)
+- `bun run lint` - Run linter
+- `bun run format` - Run formatter
+- `bun run type-check` - Run type check
+
+**UV (Python):**
+- `uv run test` - Run tests (pytest)
+- `uv run lint` - Run linter (ruff)
+- `uv run format` - Run formatter (ruff)
+- `uv run format_check` - Check formatting
+- `uv run type_check` - Run type check (ty)
+
+**Cargo (Rust):**
+- `cargo test` - Run tests
+- `cargo lint` - Run linter (clippy)
+- `cargo format` - Run formatter
+- `cargo format-check` - Check formatting
+- `cargo type-check` - Run type check
 
 ## Environment Variables
 

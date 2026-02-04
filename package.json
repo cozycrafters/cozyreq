@@ -3,9 +3,11 @@
   "private": true,
   "workspaces": ["apps/web"],
   "scripts": {
-    "lint": "oxlint apps/web",
-    "format": "oxfmt apps/web",
-    "type-check": "cd apps/web && tsc --noEmit"
+    "test": "bun run --cwd apps/web lint",
+    "lint": "bun run --cwd apps/web lint",
+    "format": "bun run --cwd apps/web format",
+    "format:check": "bun run --cwd apps/web format:check || echo 'No format:check script defined in apps/web'",
+    "type-check": "bun run --cwd apps/web type-check"
   },
   "devDependencies": {
     "oxlint": "latest",

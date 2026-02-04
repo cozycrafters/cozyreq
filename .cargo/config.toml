@@ -1,0 +1,6 @@
+[alias]
+test = "test --manifest-path apps/cli/Cargo.toml"
+lint = "clippy --manifest-path apps/cli/Cargo.toml -- -D warnings"
+format = "fmt --manifest-path apps/cli/Cargo.toml"
+format-check = "fmt --manifest-path apps/cli/Cargo.toml -- --check"
+type-check = "check --manifest-path apps/cli/Cargo.toml"

@@ -5,6 +5,31 @@ This is a **monorepo** with three workspaces:
 - **TypeScript (Bun)**: `apps/web/`
 - **Rust (Cargo)**: `apps/cli/`
 
+## Root-Level Commands
+
+All quality and testing commands can be run from the project root:
+
+### Bun (TypeScript)
+- Test: `bun run test`
+- Lint: `bun run lint`
+- Format: `bun run format`
+- Format check: `bun run format:check`
+- Type check: `bun run type-check`
+
+### UV (Python)
+- Test: `uv run test`
+- Lint: `uv run lint`
+- Format: `uv run format`
+- Format check: `uv run format_check`
+- Type check: `uv run type_check`
+
+### Cargo (Rust)
+- Test: `cargo test`
+- Lint: `cargo lint`
+- Format: `cargo format`
+- Format check: `cargo format-check`
+- Type check: `cargo type-check`
+
 ## Python Commands (UV)
 
 ### Root Project
@@ -12,23 +37,18 @@ This is a **monorepo** with three workspaces:
 - Add dependency: `uv add <package>` (or `uv add --dev <package>` for dev deps)
 - Remove dependency: `uv remove <package>`
 - Run app: `cozyreq` (or `uv run cozyreq`)
-- Run tests: `uv run pytest`
+- Run tests: `uv run test`
 - Run single test: `uv run pytest tests/path/to/test_file.py::test_function_name`
-- Format check: `uv run ruff format --check`
-- Format fix: `uv run ruff format`
-- Lint: `uv run ruff check`
-- Type check: `uv run ty check`
+- Format check: `uv run format_check`
+- Format fix: `uv run format`
+- Lint: `uv run lint`
+- Type check: `uv run type_check`
 - Docs: `uv zensical serve` (opens at localhost:8000)
 
 ### Apps/API (FastAPI)
 - Install dependencies: `uv sync --project apps/api`
 - Add dependency: `uv add --project apps/api <package>`
 - Run dev server: `uv run --project apps/api uvicorn src.main:app --reload --port 8000`
-- Run tests: `uv run --project apps/api pytest`
-- Format check: `uv run --project apps/api ruff format --check`
-- Format fix: `uv run --project apps/api ruff format`
-- Lint: `uv run --project apps/api ruff check`
-- Type check: `uv run --project apps/api ty check`
 
 ## TypeScript Commands (Bun)
 
@@ -37,9 +57,10 @@ This is a **monorepo** with three workspaces:
 - Run dev server: `bun run --cwd apps/web dev` or `mise run dev:web`
 - Build: `bun run --cwd apps/web build`
 - Start production: `bun run --cwd apps/web start`
-- Lint (oxlint): `bun run --cwd apps/web lint`
-- Format (oxfmt): `bun run --cwd apps/web format`
-- Type check: `bun run --cwd apps/web type-check`
+- Lint: `bun run lint`
+- Format: `bun run format`
+- Format check: `bun run format:check`
+- Type check: `bun run type-check`
 
 ### Root (Workspace Management)
 - Install all deps: `bun install`
@@ -52,10 +73,11 @@ This is a **monorepo** with three workspaces:
 - Build: `cargo build --manifest-path apps/cli/Cargo.toml`
 - Build release: `cargo build --release --manifest-path apps/cli/Cargo.toml`
 - Run: `cargo run --manifest-path apps/cli/Cargo.toml`
-- Run tests: `cargo test --manifest-path apps/cli/Cargo.toml`
-- Lint (clippy): `cargo clippy --manifest-path apps/cli/Cargo.toml -- -D warnings`
-- Format: `cargo fmt --manifest-path apps/cli/Cargo.toml`
-- Check formatting: `cargo fmt --manifest-path apps/cli/Cargo.toml -- --check`
+- Run tests: `cargo test`
+- Lint: `cargo lint`
+- Format: `cargo format`
+- Format check: `cargo format-check`
+- Type check: `cargo type-check`
 
 ## Mise Tasks (Cross-Language)
 
@@ -71,15 +93,12 @@ This is a **monorepo** with three workspaces:
 - `mise run db:reset` - Reset Supabase database
 - `mise run db:migrate` - Run Supabase migrations
 
-### Testing
-- `mise run test` - Run all test suites
-- `mise run test:web` - Run Next.js tests
-- `mise run test:api` - Run FastAPI tests
-- `mise run test:cli` - Run Rust CLI tests
-
-### Quality
-- `mise run lint` - Run all linters (oxlint, ruff, clippy)
-- `mise run format` - Run all formatters (oxfmt, ruff format, rustfmt)
+### Testing & Quality (Root Level)
+- `mise run test` - Run all test suites (bun + uv + cargo)
+- `mise run lint` - Run all linters (oxlint + ruff + clippy)
+- `mise run format` - Run all formatters (oxfmt + ruff + rustfmt)
+- `mise run format_check` - Check all formatting
+- `mise run type_check` - Run all type checks (tsc + ty + cargo check)
 
 ### Setup
 - `mise run setup` - Initial project setup

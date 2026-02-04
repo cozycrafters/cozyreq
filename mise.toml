@@ -48,64 +48,47 @@ run = "supabase db reset"
 description = "Run Supabase migrations"
 run = "supabase migration up"
 
-# Testing Tasks
+# Testing Tasks (root level)
 [tasks.test]
-description = "Run all test suites"
-depends = ["test:web", "test:api", "test:cli"]
+description = "Run all test suites (bun test + uv run test + cargo test)"
+run = """
+bun run test
+uv run test
+cargo test
+"""
 
-[tasks."test:web"]
-description = "Run Next.js tests with oxlint"
-run = "bun run lint"
-dir = "apps/web"
-
-[tasks."test:api"]
-description = "Run FastAPI tests"
-run = "uv run pytest"
-dir = "apps/api"
-
-[tasks."test:cli"]
-description = "Run Rust CLI tests"
-run = "cargo test"
-dir = "apps/cli"
-
-# Quality Tasks
+# Quality Tasks (root level)
 [tasks.lint]
-description = "Run all linters: oxlint (Web), ruff (API), clippy (CLI)"
-depends = ["lint:web", "lint:api", "lint:cli"]
-
-[tasks."lint:web"]
-description = "Run oxlint for JavaScript/TypeScript (Next.js)"
-run = "bun run lint"
-dir = "apps/web"
-
-[tasks."lint:api"]
-description = "Run ruff for Python (FastAPI)"
-run = "uv run ruff check"
-dir = "apps/api"
-
-[tasks."lint:cli"]
-description = "Run clippy for Rust (CLI)"
-run = "cargo clippy -- -D warnings"
-dir = "apps/cli"
+description = "Run all linters: oxlint, ruff, clippy"
+run = """
+bun run lint
+uv run lint
+cargo lint
+"""
 
 [tasks.format]
-description = "Run all formatters: oxfmt (Web), ruff (API), rustfmt (CLI)"
-depends = ["format:web", "format:api", "format:cli"]
+description = "Run all formatters: oxfmt, ruff, rustfmt"
+run = """
+bun run format
+uv run format
+cargo format
+"""
 
-[tasks."format:web"]
-description = "Run oxfmt for JavaScript/TypeScript (Next.js)"
-run = "bun run format"
-dir = "apps/web"
+[tasks.format_check]
+description = "Check all formatting: oxfmt, ruff, rustfmt"
+run = """
+bun run format:check
+uv run format_check
+cargo format-check
+"""
 
-[tasks."format:api"]
-description = "Run ruff format for Python (FastAPI)"
-run = "uv run ruff format"
-dir = "apps/api"
-
-[tasks."format:cli"]
-description = "Run rustfmt for Rust (CLI)"
-run = "cargo fmt"
-dir = "apps/cli"
+[tasks.type_check]
+description = "Run all type checks: tsc, ty, cargo check"
+run = """
+bun run type-check
+uv run type_check
+cargo type-check
+"""
 
 # Setup Task
 [tasks.setup]
