@@ -4,17 +4,27 @@
     "pyright": {
       "disabled": true
     },
-    "basedpyright": {
+    "ty": {
       "command": [
         "uv",
         "run",
-        "basedpyright-langserver",
-        "--stdio"
+        "ty",
+        "server"
       ],
       "extensions": [
         ".py",
         ".pyi"
       ]
+    }
+  },
+  "mcp": {
+    "Linear": {
+      "type": "remote",
+      "url": "https://mcp.linear.app/mcp",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer {env:LINEAR_API_KEY}"
+      }
     }
   }
 }
