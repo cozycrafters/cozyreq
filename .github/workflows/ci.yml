@@ -21,23 +21,28 @@ jobs:
       - name: Install dependencies (root)
         run: uv sync --frozen
       - name: Install dependencies (apps/api)
-        run: cd apps/api && uv sync --frozen
-      - name: Check formatting (ruff)
-        run: |
-          uv run ruff format --check
-          cd apps/api && uv run ruff format --check
-      - name: Run linter (ruff)
-        run: |
-          uv run ruff check
-          cd apps/api && uv run ruff check
-      - name: Run type checks (ty)
-        run: |
-          uv run ty check
-          cd apps/api && uv run ty check
-      - name: Run tests (pytest)
-        run: |
-          uv run pytest
-          cd apps/api && uv run pytest
+        working-directory: apps/api
+        run: uv sync --frozen
+      - name: Check formatting (ruff) - root
+        run: uv run ruff format --check
+      - name: Check formatting (ruff) - apps/api
+        working-directory: apps/api
+        run: uv run ruff format --check
+      - name: Run linter (ruff) - root
+        run: uv run ruff check
+      - name: Run linter (ruff) - apps/api
+        working-directory: apps/api
+        run: uv run ruff check
+      - name: Run type checks (ty) - root
+        run: uv run ty check
+      - name: Run type checks (ty) - apps/api
+        working-directory: apps/api
+        run: uv run ty check
+      - name: Run tests (pytest) - root
+        run: uv run pytest
+      - name: Run tests (pytest) - apps/api
+        working-directory: apps/api
+        run: uv run pytest
 
   rust:
     name: Rust Build
@@ -54,11 +59,14 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Run clippy check
-        run: cd apps/cli && cargo clippy -- -D warnings
+        working-directory: apps/cli
+        run: cargo clippy -- -D warnings
       - name: Run tests
-        run: cd apps/cli && cargo test
+        working-directory: apps/cli
+        run: cargo test
       - name: Build CLI
-        run: cd apps/cli && cargo build --release
+        working-directory: apps/cli
+        run: cargo build --release
 
   typescript:
     name: TypeScript Build
@@ -69,8 +77,11 @@ jobs:
       - name: Install dependencies
         run: bun install
       - name: Run linter (oxlint)
-        run: bun run --cwd apps/web lint || true
+        working-directory: apps/web
+        run: bun run lint || true
       - name: Run type check (tsc)
-        run: bun run --cwd apps/web type-check || true
+        working-directory: apps/web
+        run: bun run type-check || true
       - name: Build Next.js app
-        run: bun run --cwd apps/web build || true
+        working-directory: apps/web
+        run: bun run build || true

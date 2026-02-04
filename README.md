@@ -134,17 +134,30 @@ Individual formatters:
 
 ## Environment Variables
 
-Copy the example environment file and configure:
+The following environment variables are required. Values for Supabase can be obtained by running `supabase status` after starting the local development stack.
 
+### Supabase Configuration
+
+- `SUPABASE_URL` - Supabase API URL (from `supabase status`)
+- `SUPABASE_ANON_KEY` - Supabase anonymous key (from `supabase status`)
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key (from `supabase status`)
+
+### Authentication
+
+- `JWT_SECRET` - Shared JWT secret for authentication between Web and API
+
+### Service Configuration
+
+- `API_PORT` - FastAPI server port (default: 8000)
+- `WEB_URL` - Next.js app URL (default: http://localhost:3000)
+- `NEXT_PUBLIC_API_URL` - Public API URL for frontend (default: http://localhost:8000)
+- `NEXT_PUBLIC_SUPABASE_URL` - Public Supabase URL for frontend (from `supabase status`)
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Public Supabase key for frontend (from `supabase status`)
+
+To get Supabase values after starting:
 ```bash
-cp .env.example .env
+supabase status
 ```
-
-Key environment variables:
-- `SUPABASE_URL` / `SUPABASE_ANON_KEY` - Supabase connection
-- `JWT_SECRET` - Shared JWT secret for authentication
-- `API_PORT` - FastAPI server port
-- `WEB_URL` - Next.js app URL
 
 ## Setup
 
@@ -157,7 +170,7 @@ mise run setup
 This will:
 1. Install all dependencies (bun, cargo, uv)
 2. Initialize Supabase
-3. Copy environment templates
+3. Set up environment files
 
 ### Documentation
 
@@ -177,7 +190,3 @@ Open [localhost:8000](http://localhost:8000) in your browser.
 | API       | Python   | UV            | FastAPI   |
 | CLI       | Rust     | Cargo         | Clap      |
 | Auth      | -        | Supabase      | Magic Link (no sign-up) |
-
-## License
-
-[MIT](LICENSE.md)

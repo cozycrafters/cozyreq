@@ -2,8 +2,14 @@
   "name": "cozyreq",
   "private": true,
   "workspaces": ["apps/web"],
+  "scripts": {
+    "lint": "oxlint apps/web",
+    "format": "oxfmt apps/web",
+    "type-check": "cd apps/web && tsc --noEmit"
+  },
   "devDependencies": {
     "oxlint": "latest",
-    "oxfmt": "latest"
+    "oxfmt": "latest",
+    "typescript": "^5.0.0"
   }
 }

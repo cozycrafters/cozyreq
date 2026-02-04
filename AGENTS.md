@@ -21,14 +21,14 @@ This is a **monorepo** with three workspaces:
 - Docs: `uv zensical serve` (opens at localhost:8000)
 
 ### Apps/API (FastAPI)
-- Install dependencies: `cd apps/api && uv sync`
-- Add dependency: `cd apps/api && uv add <package>`
-- Run dev server: `cd apps/api && uv run uvicorn src.main:app --reload --port 8000`
-- Run tests: `cd apps/api && uv run pytest`
-- Format check: `cd apps/api && uv run ruff format --check`
-- Format fix: `cd apps/api && uv run ruff format`
-- Lint: `cd apps/api && uv run ruff check`
-- Type check: `cd apps/api && uv run ty check`
+- Install dependencies: `uv sync --project apps/api`
+- Add dependency: `uv add --project apps/api <package>`
+- Run dev server: `uv run --project apps/api uvicorn src.main:app --reload --port 8000`
+- Run tests: `uv run --project apps/api pytest`
+- Format check: `uv run --project apps/api ruff format --check`
+- Format fix: `uv run --project apps/api ruff format`
+- Lint: `uv run --project apps/api ruff check`
+- Type check: `uv run --project apps/api ty check`
 
 ## TypeScript Commands (Bun)
 
@@ -48,14 +48,14 @@ This is a **monorepo** with three workspaces:
 ## Rust Commands (Cargo)
 
 ### Apps/CLI
-- Fetch dependencies: `cd apps/cli && cargo fetch`
-- Build: `cd apps/cli && cargo build`
-- Build release: `cd apps/cli && cargo build --release`
-- Run: `cd apps/cli && cargo run`
-- Run tests: `cd apps/cli && cargo test`
-- Lint (clippy): `cd apps/cli && cargo clippy -- -D warnings`
-- Format: `cd apps/cli && cargo fmt`
-- Check formatting: `cd apps/cli && cargo fmt -- --check`
+- Fetch dependencies: `cargo fetch --manifest-path apps/cli/Cargo.toml`
+- Build: `cargo build --manifest-path apps/cli/Cargo.toml`
+- Build release: `cargo build --release --manifest-path apps/cli/Cargo.toml`
+- Run: `cargo run --manifest-path apps/cli/Cargo.toml`
+- Run tests: `cargo test --manifest-path apps/cli/Cargo.toml`
+- Lint (clippy): `cargo clippy --manifest-path apps/cli/Cargo.toml -- -D warnings`
+- Format: `cargo fmt --manifest-path apps/cli/Cargo.toml`
+- Check formatting: `cargo fmt --manifest-path apps/cli/Cargo.toml -- --check`
 
 ## Mise Tasks (Cross-Language)
 
