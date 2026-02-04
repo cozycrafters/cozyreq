@@ -19,13 +19,13 @@ jobs:
         with:
           python-version-file: .python-version
       - name: Install dependencies
-        run: uv sync --frozen
+        run: uv sync --frozen --all-packages
       - name: Check formatting
         run: uv run ruff format --check
       - name: Run linter
         run: uv run ruff check
       - name: Run type checks
-        run: uv run ty --check
+        run: uv run ty check
 
   rust:
     name: Rust Build

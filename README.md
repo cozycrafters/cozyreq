@@ -19,7 +19,7 @@ Install dependencies:
 
 ```bash
 bun install
-uv sync
+uv sync --all-packages
 ```
 
 Start local database:
