@@ -24,6 +24,6 @@ jobs:
       - name: Python linter
         run: uv run ruff check
       - name: Run Python type checks
-        run: uv run basedpyright
+        run: uv run ty check
       - name: Run Python tests
         run: uv run pytest
