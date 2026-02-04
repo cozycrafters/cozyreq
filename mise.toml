@@ -11,9 +11,8 @@ python.uv_venv_auto = true
 _.file = '.env'
 OPENCODE_EXPERIMENTAL_OXFMT = "true"
 
-# Development Tasks
 [tasks.dev]
-description = "Start all services (Supabase + FastAPI + Next.js) in parallel"
+description = "Start all services (Supabase + API + web) in parallel"
 depends = ["db:start", "dev:api", "dev:web"]
 
 [tasks."dev:web"]
@@ -23,7 +22,7 @@ dir = "apps/web"
 
 [tasks."dev:api"]
 description = "Start FastAPI dev server only"
-run = "uv run uvicorn src.main:app --reload --port 8000"
+run = "fastapi dev src/main.py"
 dir = "apps/api"
 
 [tasks."dev:cli"]
@@ -31,7 +30,6 @@ description = "Build and run CLI in dev mode"
 run = "cargo run"
 dir = "apps/cli"
 
-# Database Tasks
 [tasks."db:start"]
 description = "Start Supabase local stack"
 run = "supabase start"
@@ -44,66 +42,26 @@ run = "supabase stop"
 description = "Reset Supabase (useful for testing)"
 run = "supabase db reset"
 
-[tasks."db:migrate"]
-description = "Run Supabase migrations"
-run = "supabase migration up"
-
-# Testing Tasks (root level)
 [tasks.test]
 description = "Run all test suites (bun test + uv run test + cargo test)"
 run = """
 bun run test
-uv run test
+pytest
 cargo test
 """
 
-# Quality Tasks (root level)
 [tasks.lint]
 description = "Run all linters: oxlint, ruff, clippy"
 run = """
 bun run lint
-uv run lint
+ruff check
 cargo lint
 """
 
 [tasks.format]
 description = "Run all formatters: oxfmt, ruff, rustfmt"
 run = """
-bun run format
-uv run format
+bun run fmt
+ruff format
 cargo format
 """
-
-[tasks.format_check]
-description = "Check all formatting: oxfmt, ruff, rustfmt"
-run = """
-bun run format:check
-uv run format_check
-cargo format-check
-"""
-
-[tasks.type_check]
-description = "Run all type checks: tsc, ty, cargo check"
-run = """
-bun run type-check
-uv run type_check
-cargo type-check
-"""
-
-# Setup Task
-[tasks.setup]
-description = "Initial setup: install dependencies, initialize Supabase, set up environment"
-depends = ["setup:deps", "setup:supabase"]
-
-[tasks."setup:deps"]
-description = "Install all dependencies (bun, cargo, uv)"
-run = """
-bun install
-cargo fetch --manifest-path apps/cli/Cargo.toml
-uv sync
-uv sync --project apps/api
-"""
-
-[tasks."setup:supabase"]
-description = "Initialize Supabase (if not already initialized)"
-run = "supabase init --yes || echo 'Supabase already initialized'"

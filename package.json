@@ -1,17 +1,19 @@
 {
   "name": "cozyreq",
   "private": true,
-  "workspaces": ["apps/web"],
+  "workspaces": [
+    "apps/web"
+  ],
   "scripts": {
     "test": "bun run --cwd apps/web lint",
-    "lint": "bun run --cwd apps/web lint",
-    "format": "bun run --cwd apps/web format",
-    "format:check": "bun run --cwd apps/web format:check || echo 'No format:check script defined in apps/web'",
-    "type-check": "bun run --cwd apps/web type-check"
+    "lint": "oxlint",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "type-check": "bun --filter '*' type-check"
   },
   "devDependencies": {
-    "oxlint": "latest",
-    "oxfmt": "latest",
+    "oxfmt": "^0.28.0",
+    "oxlint": "^1.43.0",
     "typescript": "^5.0.0"
   }
 }
