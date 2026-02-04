@@ -1,0 +1,19 @@
+{
+  "name": "cozyreq",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "test": "bun run --cwd apps/web lint",
+    "lint": "oxlint",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
+    "type-check": "bun --filter '*' type-check"
+  },
+  "devDependencies": {
+    "oxfmt": "^0.28.0",
+    "oxlint": "^1.43.0",
+    "typescript": "^5.0.0"
+  }
+}

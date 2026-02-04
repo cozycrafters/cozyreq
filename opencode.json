@@ -5,16 +5,8 @@
       "disabled": true
     },
     "ty": {
-      "command": [
-        "uv",
-        "run",
-        "ty",
-        "server"
-      ],
-      "extensions": [
-        ".py",
-        ".pyi"
-      ]
+      "command": ["uv", "run", "ty", "server"],
+      "extensions": [".py", ".pyi"]
     }
   },
   "mcp": {

@@ -14,3 +14,9 @@ site/
 
 # Local environment variables
 .env
+
+# Node.js
+node_modules/
+
+# Rust
+target/
