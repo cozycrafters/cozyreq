@@ -1,8 +1,117 @@
 [tools]
+bun = "latest"
+"github:supabase/cli" = "latest"
 uv = "latest"
+rust = "latest"
 
 [settings]
 python.uv_venv_auto = true
 
 [env]
 _.file = '.env'
+
+# Development Tasks
+[tasks.dev]
+description = "Start all services (Supabase + FastAPI + Next.js) in parallel"
+depends = ["db:start", "dev:api", "dev:web"]
+
+[tasks."dev:web"]
+description = "Start Next.js dev server only"
+run = "bun run --cwd apps/web dev"
+
+[tasks."dev:api"]
+description = "Start FastAPI dev server only"
+run = "cd apps/api && uv run uvicorn src.main:app --reload --port 8000"
+
+[tasks."dev:cli"]
+description = "Build and run CLI in dev mode"
+run = "cd apps/cli && cargo run"
+
+# Database Tasks
+[tasks."db:start"]
+description = "Start Supabase local stack"
+run = "supabase start"
+
+[tasks."db:stop"]
+description = "Stop Supabase"
+run = "supabase stop"
+
+[tasks."db:reset"]
+description = "Reset Supabase (useful for testing)"
+run = "supabase db reset"
+
+[tasks."db:migrate"]
+description = "Run Supabase migrations"
+run = "supabase migration up"
+
+# Testing Tasks
+[tasks.test]
+description = "Run all test suites"
+depends = ["test:web", "test:api", "test:cli"]
+
+[tasks."test:web"]
+description = "Run Next.js tests with oxlint"
+run = "bun run --cwd apps/web lint"
+
+[tasks."test:api"]
+description = "Run FastAPI tests"
+run = "cd apps/api && uv run pytest"
+
+[tasks."test:cli"]
+description = "Run Rust CLI tests"
+run = "cd apps/cli && cargo test"
+
+# Quality Tasks
+[tasks.lint]
+description = "Run all linters: oxlint (Web), ruff (API), clippy (CLI)"
+depends = ["lint:web", "lint:api", "lint:cli"]
+
+[tasks."lint:web"]
+description = "Run oxlint for JavaScript/TypeScript (Next.js)"
+run = "bun run --cwd apps/web lint"
+
+[tasks."lint:api"]
+description = "Run ruff for Python (FastAPI)"
+run = "cd apps/api && uv run ruff check"
+
+[tasks."lint:cli"]
+description = "Run clippy for Rust (CLI)"
+run = "cd apps/cli && cargo clippy -- -D warnings"
+
+[tasks.format]
+description = "Run all formatters: oxfmt (Web), ruff (API), rustfmt (CLI)"
+depends = ["format:web", "format:api", "format:cli"]
+
+[tasks."format:web"]
+description = "Run oxfmt for JavaScript/TypeScript (Next.js)"
+run = "bun run --cwd apps/web format"
+
+[tasks."format:api"]
+description = "Run ruff format for Python (FastAPI)"
+run = "cd apps/api && uv run ruff format"
+
+[tasks."format:cli"]
+description = "Run rustfmt for Rust (CLI)"
+run = "cd apps/cli && cargo fmt"
+
+# Setup Task
+[tasks.setup]
+description = "Initial setup: install dependencies, initialize Supabase, copy env templates"
+depends = ["setup:deps", "setup:supabase", "setup:env"]
+
+[tasks."setup:deps"]
+description = "Install all dependencies (bun, cargo, uv)"
+run = """
+bun install
+cd apps/cli && cargo fetch
+uv sync
+cd apps/api && uv sync
+"""
+
+[tasks."setup:supabase"]
+description = "Initialize Supabase (if not already initialized)"
+run = "supabase init --yes || echo 'Supabase already initialized'"
+
+[tasks."setup:env"]
+description = "Copy environment templates"
+run = "[ -f .env ] || cp .env.example .env"

@@ -39,3 +39,6 @@ include = ["pyproject.toml", "src/**/*.py", "tests/**/*.py"]
 
 [tool.uv]
 package = true
+
+[tool.uv.workspace]
+members = ["apps/api"]

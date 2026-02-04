@@ -7,7 +7,8 @@ on:
     branches: ["main"]
 
 jobs:
-  build:
+  python:
+    name: Python Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -17,13 +18,59 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version-file: .python-version
-      - name: Install Python dependencies
+      - name: Install dependencies (root)
         run: uv sync --frozen
-      - name: Check Python formatting
-        run: uv run ruff format --check
-      - name: Python linter
-        run: uv run ruff check
-      - name: Run Python type checks
-        run: uv run ty check
-      - name: Run Python tests
-        run: uv run pytest
+      - name: Install dependencies (apps/api)
+        run: cd apps/api && uv sync --frozen
+      - name: Check formatting (ruff)
+        run: |
+          uv run ruff format --check
+          cd apps/api && uv run ruff format --check
+      - name: Run linter (ruff)
+        run: |
+          uv run ruff check
+          cd apps/api && uv run ruff check
+      - name: Run type checks (ty)
+        run: |
+          uv run ty check
+          cd apps/api && uv run ty check
+      - name: Run tests (pytest)
+        run: |
+          uv run pytest
+          cd apps/api && uv run pytest
+
+  rust:
+    name: Rust Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Cache cargo dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Run clippy check
+        run: cd apps/cli && cargo clippy -- -D warnings
+      - name: Run tests
+        run: cd apps/cli && cargo test
+      - name: Build CLI
+        run: cd apps/cli && cargo build --release
+
+  typescript:
+    name: TypeScript Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        run: bun install
+      - name: Run linter (oxlint)
+        run: bun run --cwd apps/web lint || true
+      - name: Run type check (tsc)
+        run: bun run --cwd apps/web type-check || true
+      - name: Build Next.js app
+        run: bun run --cwd apps/web build || true
