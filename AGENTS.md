@@ -29,10 +29,9 @@ All quality and testing commands can be run from the project root:
 ### Cargo (Rust)
 
 - Test: `cargo test`
-- Lint: `cargo lint`
-- Format: `cargo format`
-- Format check: `cargo format-check`
-- Type check: `cargo type-check`
+- Lint: `cargo clippy -- -D warnings`
+- Format: `cargo fmt`
+- Format check: `cargo fmt -- --check`
 
 ## Python Commands (UV)
 
@@ -82,11 +81,10 @@ All quality and testing commands can be run from the project root:
 - Build: `cargo build --manifest-path apps/cli/Cargo.toml`
 - Build release: `cargo build --release --manifest-path apps/cli/Cargo.toml`
 - Run: `cargo run --manifest-path apps/cli/Cargo.toml`
-- Run tests: `cargo test`
-- Lint: `cargo lint`
-- Format: `cargo format`
-- Format check: `cargo format-check`
-- Type check: `cargo type-check`
+- Run tests: `cargo test --manifest-path apps/cli/Cargo.toml`
+- Lint: `cargo clippy --manifest-path apps/cli/Cargo.toml -- -D warnings`
+- Format: `cargo fmt --manifest-path apps/cli/Cargo.toml`
+- Format check: `cargo fmt --manifest-path apps/cli/Cargo.toml -- --check`
 
 ## Mise Tasks (Cross-Language)
 
